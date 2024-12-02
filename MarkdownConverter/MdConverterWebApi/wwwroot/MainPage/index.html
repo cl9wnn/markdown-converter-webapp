@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/MainPage/style.css">
+    <title>Title</title>
+</head>
+
+<body>
+    <header>
+        <!-- можно потом добавить обработчик и сделать норм редирект из js-->
+        <a class="header-link"  href="http://localhost:8080/lk">
+            <img src="https://esales.poscoassan.com.tr/public/assets/images/users/avatar-9.png" id="lk-icon" alt="lk-icon">
+            Личный кабинет
+        </a>
+    </header>
+
+    <div class="main-container">
+        <div class="description-container"> 
+            <h1>Markdown converter</h1>    
+            <p>Вставьте или введите свой markdown текст и он будет отображен в формате HTML. Скачайте или скопируйте полученный HTML-код.</p>
+        </div>
+        
+        <div class="form-container">
+            <div class ="form-area">
+                <form id="markdown-form" method="post">
+                    <textarea class="markdown-textarea" id="markdown-input" name="markdown-input" rows="10" cols="50" placeholder="Введите Markdown разметку"></textarea>
+                    <textarea class="markdown-textarea" id="markdown-result" rows="10" cols="50" readonly></textarea>
+                </form>
+            </div>
+            <button id="send-bttn" type="submit"> отправить</button>
+        </div>
+    </div>
+</body>
+
+</html>
