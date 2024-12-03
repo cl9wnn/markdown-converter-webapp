@@ -9,6 +9,8 @@ html, body{
     background-color: rgb(48, 203, 6);
 }
 
+/*------------------   HEADER   ------------------*/
+
 header{
     display: flex;
     flex-direction: column;
@@ -20,6 +22,26 @@ header{
     width: 100%;
     height: 70px;
 }
+
+.header-link{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-decoration: none;
+    color:black;
+    margin-right: 15px;
+    font-size: 18px;
+}
+
+#lk-icon{
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+}
+
+
+/*------------------   CONTENT   ------------------*/
+
 
 .description-container{
     width: 95%;
@@ -48,6 +70,7 @@ header{
     width: 100%;
     background-color: aquamarine;
 }
+
 .form-area{
     display: flex;
     flex-direction: row;
@@ -86,23 +109,7 @@ header{
     outline: none;
 }
 
-.header-link{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    text-decoration: none;
-    color:black;
-    margin-right: 15px;
-    font-size: 18px;
-}
-
 #send-bttn{
     width: 100px;
     height: 40px;
-}
-
-#lk-icon{
-    width: 16px;
-    height: 16px;
-    margin-right: 5px;
 }

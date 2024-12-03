@@ -6,4 +6,9 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="wwwroot\RegisterPage\" />
+      <Folder Include="wwwroot\UserProfilePage\" />
+    </ItemGroup>
+
 </Project>
