@@ -1,0 +1,13 @@
+using Microsoft.AspNetCore.Mvc;
+
+namespace API.Controllers;
+
+[ApiController]
+public class PageController: ControllerBase
+{
+    [HttpGet("/")]
+    public IActionResult ShowMainPage()
+    {
+        return File("MainPage/index.html", "text/html");
+    }
+}
