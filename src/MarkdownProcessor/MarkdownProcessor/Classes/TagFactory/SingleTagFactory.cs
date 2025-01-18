@@ -4,7 +4,7 @@ using Markdown.Interfaces;
 
 namespace Markdown.Classes.TagFactory;
 
-public class SingleTagFactory : ITagFactory
+public class SingleTagFactory 
 {
     private readonly IEnumerable<TagElement> _tags;
 

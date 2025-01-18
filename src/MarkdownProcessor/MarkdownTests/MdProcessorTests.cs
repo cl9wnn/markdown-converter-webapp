@@ -17,8 +17,8 @@ public class MdProcessorTests
     {
         IEnumerable<TagElement> tags = [new HeaderTag(), new BoldTag(), new ItalicTag(), new MarkedListTag()];
 
-        var singleTagFactory = new SingleTagFactory(tags);
         var doubleTagFactory = new DoubleTagFactory(tags);
+        var singleTagFactory = new SingleTagFactory(tags);
 
         var lineRenderer = new LineRenderer();
         var listRenderer = new ListRenderer();

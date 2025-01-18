@@ -1,4 +1,5 @@
 ﻿using Markdown.Abstract_classes;
+using Markdown.Classes.TagFactory;
 using Markdown.Classes.Tags;
 using Markdown.Interfaces;
 
@@ -7,8 +8,8 @@ namespace Markdown.Classes.Parsers;
 public class LineParser : IParser<Line>
 {
     private readonly IParser<Token> _tokenParser;
-    private readonly ITagFactory _tagFactory;
-    public LineParser(IParser<Token> tokenParser, ITagFactory tagFactory)
+    private readonly SingleTagFactory _tagFactory;
+    public LineParser(IParser<Token> tokenParser, SingleTagFactory tagFactory)
     {
         _tokenParser = tokenParser;
         _tagFactory = tagFactory;

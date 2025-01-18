@@ -3,7 +3,7 @@ using Markdown.Interfaces;
 
 namespace Markdown.Classes.TagFactory;
 
-public class DoubleTagFactory : ITagFactory
+public class DoubleTagFactory 
 {
     private readonly IEnumerable<TagElement> _tags;
 

@@ -1,12 +1,13 @@
-﻿using Markdown.Interfaces;
+﻿using Markdown.Classes.TagFactory;
+using Markdown.Interfaces;
 
 namespace Markdown.Classes.Parsers;
 
 public class TokenParser : IParser<Token>
 {
-    private readonly ITagFactory _doubleTagFactory;
+    private readonly DoubleTagFactory _doubleTagFactory;
 
-    public TokenParser(ITagFactory doubleTagFactory)
+    public TokenParser(DoubleTagFactory doubleTagFactory)
     {
         _doubleTagFactory = doubleTagFactory;
     }
