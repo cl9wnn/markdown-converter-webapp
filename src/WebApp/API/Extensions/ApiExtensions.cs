@@ -1,16 +1,22 @@
-using System.Text;
+﻿using System.Text;
 using Application.Models;
+using Markdown.Abstract_classes;
+using Markdown.Classes;
+using Markdown.Classes.Parsers;
+using Markdown.Classes.Renderers;
+using Markdown.Classes.TagFactory;
+using Markdown.Classes.Tags;
+using Markdown.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Application.Extensions;
+namespace API.Extensions;
 
-public static class AuthExtensions
+public static class ApiExtensions
 {
     public static IServiceCollection AddAuth(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
+        
         var authSettings = configuration.GetSection("AuthSettings").Get<AuthSettings>();
 
         serviceCollection.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -41,5 +47,33 @@ public static class AuthExtensions
             });
         
         return serviceCollection;
+    }
+    
+    public static IServiceCollection AddMdProcessor(this IServiceCollection services)
+    {
+        
+        services.AddSingleton<IEnumerable<TagElement>>(new List<TagElement>
+        {
+            new HeaderTag(),
+            new BoldTag(),
+            new ItalicTag(),
+            new MarkedListTag(),
+        });
+        
+        services.AddSingleton<DoubleTagFactory>();
+        services.AddSingleton<SingleTagFactory>();
+
+
+        services.AddSingleton<LineRenderer>();
+        services.AddSingleton<ListRenderer>();
+
+        services.AddSingleton<IParser<Token>, TokenParser>();
+        services.AddSingleton<IParser<Line>, LineParser>();
+
+        services.AddSingleton<IRenderer, HtmlRenderer>();
+
+        services.AddSingleton<IMarkdownProcessor,MarkdownProcessor>();
+
+        return services;
     }
 }

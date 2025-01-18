@@ -19,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Application\Application.csproj" />
+        <ProjectReference Include="..\Application\Application.csproj" />
         <ProjectReference Include="..\Persistence\Persistence.csproj" />
     </ItemGroup>
 
@@ -32,6 +32,12 @@
       <_ContentIncludedByDefault Remove="wwwroot\RegisterPage\index.html" />
       <_ContentIncludedByDefault Remove="wwwroot\RegisterPage\script.js" />
       <_ContentIncludedByDefault Remove="wwwroot\RegisterPage\style.css" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Markdown">
+        <HintPath>..\..\MarkdownProcessor\MarkdownProcessor\bin\Debug\net8.0\Markdown.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

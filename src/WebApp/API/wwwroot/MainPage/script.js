@@ -22,8 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function convertToHtml() {
     let token = tokenStorage.get();
-    const rawMd = "Ваш markdown текст"; 
-
+    const rawMd = document.getElementById("markdown-input").value;
+    
     try {
         const response = await fetch(`/api/convert`, {
             method: 'POST',
@@ -31,11 +31,13 @@ async function convertToHtml() {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ rawMd })
+            body: JSON.stringify({ rawMd: rawMd }) 
         });
 
         if (response.ok) {
-            console.log('ok');
+            const data = await response.json();
+            document.getElementById("markdown-result").innerHTML = data.html;
+
         } else if (response.status === 401) {
             const loginSuccessful = await showForm(createLoginForm, '/auth/signin', 'Sign In');
 
