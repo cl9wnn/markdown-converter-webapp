@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -9,5 +10,11 @@ public class PageController: ControllerBase
     public IActionResult ShowMainPage()
     {
         return File("MainPage/index.html", "text/html");
+    }
+    
+    [HttpGet("/documents")]
+    public IActionResult ShowDocumentsPage()
+    {
+        return File("DocumentsPage/index.html", "text/html");
     }
 }

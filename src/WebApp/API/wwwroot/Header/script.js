@@ -27,14 +27,14 @@ function updateHeaderButtons() {
     headerButtonsContainer.innerHTML = ''; 
 
     if (token) {
-        const accountBtn = document.createElement('button');
-        accountBtn.className = 'header-buttons';
-        accountBtn.id = 'accountBtn';
-        accountBtn.textContent = 'Account';
-        accountBtn.addEventListener('click', () => {
-            window.location.href = '/account'; 
+        const documentsBtn = document.createElement('button');
+        documentsBtn.className = 'header-buttons';
+        documentsBtn.id = 'documentsBtn';
+        documentsBtn.textContent = 'My documents';
+        documentsBtn.addEventListener('click', () => {
+            window.location.href = '/documents'; 
         });
-        headerButtonsContainer.appendChild(accountBtn);
+        headerButtonsContainer.appendChild(documentsBtn);
     } else {
         const registerBtn = document.createElement('button');
         registerBtn.className = 'header-buttons';

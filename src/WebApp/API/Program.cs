@@ -11,8 +11,10 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
-builder.Services.AddScoped<MdService>();
+builder.Services.AddScoped<DocumentsService>();
+builder.Services.AddScoped<IDocumentsRepository, DocumentsRepository>();
 
+builder.Services.AddScoped<MdService>();
 builder.Services.AddScoped<JwtService>();
 
 builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection("AuthSettings"));
