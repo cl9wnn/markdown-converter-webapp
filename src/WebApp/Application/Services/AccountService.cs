@@ -11,6 +11,7 @@ public class AccountService(IAccountRepository accountRepository, JwtService jwt
     {
         var account = new Account
         {
+            AccountId = Guid.NewGuid(),
             Email = email,
             PasswordHash = password,
             FirstName = firstName

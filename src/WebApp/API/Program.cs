@@ -19,6 +19,9 @@ builder.Services.AddScoped<JwtService>();
 
 builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection("AuthSettings"));
 
+builder.Services.Configure<MinIoSettings>(builder.Configuration.GetSection("MinIoSettings"));
+builder.Services.AddScoped<MinioService>();
+
 builder.Services.AddDataBase(builder.Configuration);
 builder.Services.AddAuth(builder.Configuration);
 builder.Services.AddMdProcessor();

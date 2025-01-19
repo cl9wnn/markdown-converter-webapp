@@ -7,11 +7,15 @@ namespace Persistence;
 public class WebDbContext(DbContextOptions<WebDbContext> options): DbContext(options)
 { 
     public DbSet<AccountEntity> Accounts { get; set; }
+    public DbSet<DocumentEntity> Documents { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.ApplyConfiguration(new UserConfiguration());
+        modelBuilder.ApplyConfiguration(new DocumentConfiguration());
+
     }
 }

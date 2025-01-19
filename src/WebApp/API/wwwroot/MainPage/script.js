@@ -100,3 +100,37 @@ async function convertToHtml() {
         alert(error);
     }
 }
+
+export async function saveProject(title) {
+    let token = tokenStorage.get();
+    const rawMd = document.getElementById("markdown-input").value;
+
+    try {
+        const response = await fetch(`/api/documents/create`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                name:title,
+                mdContent: rawMd
+            })
+        });
+
+        if (response.ok) {
+
+        } else if (response.status === 401) {
+            const loginSuccessful = await showForm(createLoginForm, '/auth/signin', 'Sign In');
+
+            if (loginSuccessful) {
+            }
+        } else {
+            const data = await response.json();
+            alert(data);
+        }
+    } catch (error) {
+        alert(error);
+    }
+}
+

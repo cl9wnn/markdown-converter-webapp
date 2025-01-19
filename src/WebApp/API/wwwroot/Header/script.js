@@ -1,4 +1,7 @@
 ﻿import { tokenStorage, showForm, createLoginForm, createRegisterForm } from "../Authorization/script.js";
+import { createModal } from "./modal.js";
+import {saveProject} from "../MainPage/script.js";
+
 
 document.addEventListener('DOMContentLoaded', () => {
     updateHeaderButtons();
@@ -35,6 +38,18 @@ function updateHeaderButtons() {
             window.location.href = '/documents'; 
         });
         headerButtonsContainer.appendChild(documentsBtn);
+
+        const saveAsProjectBtn = document.createElement('button');
+        saveAsProjectBtn.className = 'header-buttons';
+        saveAsProjectBtn.id = 'saveProjectBtn';
+        saveAsProjectBtn.textContent = 'Save as project';
+        saveAsProjectBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            createModal(saveProject);
+        });
+        headerButtonsContainer.appendChild(documentsBtn);
+        headerButtonsContainer.appendChild(saveAsProjectBtn);
+        
     } else {
         const registerBtn = document.createElement('button');
         registerBtn.className = 'header-buttons';
@@ -58,3 +73,5 @@ function updateHeaderButtons() {
         headerButtonsContainer.appendChild(loginBtn);
     }
 }
+
+

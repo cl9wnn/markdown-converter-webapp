@@ -8,7 +8,6 @@ namespace API.Controllers;
 [ApiController]
 public class MarkdownController(MdService mdService): ControllerBase
 {
-    [Authorize]
     [HttpPost("api/convert")]
     public async Task<IActionResult> GetHtml([FromBody] MarkdownRequest request)
     {

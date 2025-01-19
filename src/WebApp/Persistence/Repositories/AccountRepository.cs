@@ -39,6 +39,7 @@ public class AccountRepository(WebDbContext dbContext): IAccountRepository
 
         var account = new Account
         {
+            AccountId = accountEntity.AccountId,
             Email = accountEntity.Email,
             FirstName = accountEntity.FirstName,
             PasswordHash = accountEntity.PasswordHash,
