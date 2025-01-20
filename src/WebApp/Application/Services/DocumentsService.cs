@@ -1,16 +1,16 @@
-﻿using Application.Models;
-using Core.interfaces;
+﻿using Core.interfaces;
+using Core.Models;
 using Core.Utils;
 
 namespace Application.Services;
 
 public class DocumentsService(IDocumentsRepository documentRepository, MinioService minIoService)
 {
-    public async Task<Result> CreateAsync(Guid userId, string name, string content)
+    public async Task<Result> SaveProjectAsync(Guid accountId, string name, string content)
     {
         var ctx = new CancellationTokenSource();
         
-        var createResult = await documentRepository.CreateDocumentAsync(userId, name);
+        var createResult = await documentRepository.CreateDocumentAsync(accountId, name);
 
         if (!createResult.IsSuccess)
             return Result.Failure(createResult.ErrorMessage!);
@@ -27,6 +27,46 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
             return Result.Failure(ex.Message);
         }
         return Result.Success();
+    }
+
+    public async Task<Result<ICollection<Document>>> GetUserProjectsAsync(Guid accountId)
+    {
+        var getResult = await documentRepository.GetDocumentsAsync(accountId);
+        
+        return getResult.IsSuccess
+            ? Result<ICollection<Document>>.Success(getResult.Data)
+            : Result<ICollection<Document>>.Failure(getResult.ErrorMessage!)!;
+    }
+    
+    public async Task<Result<string>> RenameProjectAsync(Guid documentId, string newName)
+    {
+        var renameResult = await documentRepository.RenameDocumentAsync(documentId, newName);
+        
+        return renameResult.IsSuccess
+            ? Result<string>.Success(renameResult.Data)
+            : Result<string>.Failure(renameResult.ErrorMessage!)!;
+    }
+    
+    public async Task<Result<string>> DeleteProjectAsync(Guid documentId)
+    {
+        var ctx = new CancellationTokenSource();
+        
+        var deleteResult = await documentRepository.DeleteDocumentAsync(documentId);
+        
+        var fileName = $"{documentId}.md"; 
+
+        try
+        {
+            await minIoService.DeleteFileAsync(fileName, ctx.Token);
+        }
+        catch (Exception ex)
+        {
+            return Result<string>.Failure(ex.Message)!;
+        }
+        
+        return deleteResult.IsSuccess
+            ? Result<string>.Success(deleteResult.Data)
+            : Result<string>.Failure(deleteResult.ErrorMessage!)!;
     }
     
 }

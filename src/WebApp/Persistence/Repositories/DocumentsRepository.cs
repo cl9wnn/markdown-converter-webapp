@@ -1,24 +1,25 @@
 ﻿using Core.interfaces;
 using Core.Models;
 using Core.Utils;
+using Microsoft.EntityFrameworkCore;
 using Persistence.Entities;
 
 namespace Persistence.Repositories;
 
 public class DocumentsRepository(WebDbContext dbContext): IDocumentsRepository
 {
-    public async Task<Result<Guid>> CreateDocumentAsync(Guid userId, string name)
+    public async Task<Result<Guid>> CreateDocumentAsync(Guid accountId, string name)
     {
-        var userEntity = dbContext.Accounts.FirstOrDefault(a => a.AccountId == userId);
+        var accountEntity = await dbContext.Accounts.FirstOrDefaultAsync(a => a.AccountId == accountId);
         
-        if (userEntity == null)
-            return Result<Guid>.Failure("User not found");
+        if (accountEntity == null)
+            return Result<Guid>.Failure("Account not found");
 
         var documentEntity = new DocumentEntity
         {
             DocumentId = Guid.NewGuid(),
-            AuthorId = userId,
-            Author = userEntity!,
+            AuthorId = accountId,
+            Author = accountEntity!,
             Name = name,
             CreatedAt = DateTime.UtcNow
         };
@@ -31,7 +32,7 @@ public class DocumentsRepository(WebDbContext dbContext): IDocumentsRepository
 
     public async Task<Result<string>> DeleteDocumentAsync(Guid documentId)
     { 
-        var documentEntity = dbContext.Documents.FirstOrDefault(d => d.DocumentId == documentId);
+        var documentEntity = await dbContext.Documents.FirstOrDefaultAsync(d => d.DocumentId == documentId);
 
         if (documentEntity == null)
             return Result<string>.Failure("Document not found")!;
@@ -42,13 +43,52 @@ public class DocumentsRepository(WebDbContext dbContext): IDocumentsRepository
         return Result<string>.Success(documentEntity.Name!);
     }
     
-    public async Task<Result> RenameDocumentAsync(Guid userId, string name)
+    public async Task<Result<Document>> GetDocumentAsync(Guid documentId)
     {
-        throw new NotImplementedException();
-    }
+        var documentEntity = await dbContext.Documents.FirstOrDefaultAsync(d => d.DocumentId == documentId)!;
+        
+        if (documentEntity == null)
+            return Result<Document>.Failure("Document not found")!;
 
-    public async Task<Result<Document>> GetDocumentAsync(Guid userId, string name)
+        var document = new Document
+        {
+            DocumentId = documentEntity.DocumentId,
+            AuthorId = documentEntity.AuthorId,
+            Name = documentEntity.Name,
+            CreatedAt = documentEntity.CreatedAt,
+        };
+
+        return Result<Document>.Success(document);
+    }
+    
+    public async Task<Result<ICollection<Document>>> GetDocumentsAsync(Guid accountId)
     {
-        throw new NotImplementedException();
+        var documentEntities = await dbContext.Documents
+            .Where(d => d.AuthorId == accountId)
+            .ToListAsync();
+        
+        
+        var documents = documentEntities.Select(documentEntity => new Document
+        {
+            DocumentId = documentEntity.DocumentId,
+            AuthorId = documentEntity.AuthorId,
+            Name = documentEntity.Name,
+            CreatedAt = documentEntity.CreatedAt,
+        }).ToList();
+        
+        return Result<ICollection<Document>>.Success(documents);
+    }
+    
+    public async Task<Result<string>> RenameDocumentAsync(Guid documentId, string newName)
+    {
+        var documentEntity = await  dbContext.Documents.FirstOrDefaultAsync(d => d.DocumentId == documentId);
+        
+        if (documentEntity == null)
+            return Result<string>.Failure("Document not found")!;
+        
+        documentEntity.Name = newName;
+        await dbContext.SaveChangesAsync();
+        
+        return Result<string>.Success(newName);
     }
 }

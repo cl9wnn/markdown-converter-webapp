@@ -130,6 +130,16 @@ header{
     outline: none;
 }
 
+#markdown-result h1 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#markdown-result p {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 #send-bttn{
     width: 100px;
     height: 40px;

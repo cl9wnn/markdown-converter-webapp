@@ -106,7 +106,7 @@ export async function saveProject(title) {
     const rawMd = document.getElementById("markdown-input").value;
 
     try {
-        const response = await fetch(`/api/documents/create`, {
+        const response = await fetch(`/api/documents/save`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
