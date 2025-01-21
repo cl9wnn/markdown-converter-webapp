@@ -1,10 +1,27 @@
-import {tokenStorage, showForm, createLoginForm, createRegisterForm} from "../Authorization/script.js";
+import {tokenStorage, showForm, createLoginForm} from "../Authorization/script.js";
 
 const sendBtn = document.getElementById("sendBtn");
 const copyBtn = document.getElementById("copyBtn");
-const saveBtn = document.getElementById("saveBtn");
+const saveHtmlBtn = document.getElementById("saveBtn");
+const saveDocumentBtn = document.getElementById("saveDocumentBtn");
 
-document.addEventListener('DOMContentLoaded', () => {
+let documentId;
+document.addEventListener('DOMContentLoaded', async () => {
+    const currentUrl = window.location.pathname;
+    const segments = currentUrl.split('/');
+    documentId = segments[segments.length - 1];
+    
+    const project = await getDocument(documentId);
+    await updateProjectPage(project);
+    
+    await getMarkdown(documentId);
+
+});
+
+
+saveDocumentBtn.addEventListener('click', async (event) => {
+    event.preventDefault();
+    await saveMarkdown(documentId);
 });
 
 sendBtn.addEventListener("click",  async () => {
@@ -43,7 +60,7 @@ function generateFullHtml(content) {
     `;
 }
 
-saveBtn.addEventListener("click", () => {
+saveHtmlBtn.addEventListener("click", () => {
     const resultElement = document.getElementById("markdown-result");
     if (!resultElement) {
         alert("Элемент с результатом не найден.");
@@ -74,7 +91,7 @@ async function convertToHtml() {
     const rawMd = document.getElementById("markdown-input").value;
     
     try {
-        const response = await fetch(`/api/convert`, {
+        const response = await fetch(`/api/markdown/convert`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -101,20 +118,52 @@ async function convertToHtml() {
     }
 }
 
-export async function saveProject(title) {
+async function getMarkdown(documentId) {
+    let token = tokenStorage.get();
+
+    try {
+        const query = new URLSearchParams({ documentId }).toString();
+
+        const response = await fetch(`/api/markdown/get?${query}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById('markdown-input').value = data.content;
+        } else if (response.status === 401) {
+            const loginSuccessful = await showForm(createLoginForm, '/auth/signin', 'Sign In');
+
+            if (loginSuccessful) {
+                console.log("Logged in successfully");
+            }
+        } else {
+            const data = await response.json();
+            alert(data);
+        }
+    } catch (error) {
+        alert(error);
+    }
+}
+
+async function saveMarkdown(documentId) {
     let token = tokenStorage.get();
     const rawMd = document.getElementById("markdown-input").value;
 
     try {
-        const response = await fetch(`/api/documents/save`, {
+        const response = await fetch(`/api/markdown/save`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
-                name:title,
-                mdContent: rawMd
+                MdContent:rawMd,
+                DocumentId: documentId
             })
         });
 
@@ -134,3 +183,37 @@ export async function saveProject(title) {
     }
 }
 
+async function getDocument(documentId) {
+    let token = tokenStorage.get();
+
+    try {
+        const response = await fetch(`/api/documents/${documentId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return data.project; 
+        } else if (response.status === 401) {
+            const loginSuccessful = await showForm(createLoginForm, '/auth/signin', 'Sign In');
+
+            if (loginSuccessful) {
+                return await getDocument(documentId);
+            }
+        } else {
+            const data = await response.json();
+            alert(data);
+        }
+    } catch (error) {
+        alert(error);
+    }
+}
+
+async function updateProjectPage(project){
+    const projectName = document.getElementById("projectName");
+    projectName.innerHTML = project.name;
+}

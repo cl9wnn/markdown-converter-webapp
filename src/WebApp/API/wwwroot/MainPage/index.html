@@ -12,14 +12,15 @@
 <header>
     <div class="header-buttons"></div>
 </header>
-
 <div class="main-container">
     <div class="description-container">
-        <h1>Markdown converter</h1>
+        <h1 id="projectName"></h1>
         <p>Вставьте или введите свой markdown текст и он будет отображен в формате HTML. Скачайте или скопируйте полученный HTML-код.</p>
     </div>
 
     <div class="form-container">
+        <button id="saveDocumentBtn">Save project</button>
+
         <div class ="form-area">
             <form id="markdown-form" method="post">
                 <textarea class="markdown-textarea" id="markdown-input" name="markdown-input" rows="10" cols="50" placeholder="Введите Markdown разметку"></textarea>

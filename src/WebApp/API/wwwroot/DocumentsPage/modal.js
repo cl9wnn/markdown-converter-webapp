@@ -1,4 +1,4 @@
-﻿export function createModal(saveProjectCallback) {
+﻿export function createModal(titleText, onSave) {
     const modal = document.createElement('div');
     modal.className = 'modal';
 
@@ -9,24 +9,24 @@
     modalContent.className = 'modal-content';
 
     const modalTitle = document.createElement('h2');
-    modalTitle.textContent = 'Save Project';
+    modalTitle.textContent = titleText;
 
     const titleInput = document.createElement('input');
     titleInput.type = 'text';
-    titleInput.id = 'projectTitle';
-    titleInput.placeholder = 'Enter project title';
+    titleInput.id = 'modalInput';
+    titleInput.placeholder = 'Enter value';
     titleInput.className = 'modal-input';
 
     const saveButton = document.createElement('button');
     saveButton.textContent = 'Save';
     saveButton.className = 'modal-save-button';
     saveButton.addEventListener('click', async () => {
-        const title = titleInput.value.trim();
-        if (title) {
-            await saveProjectCallback(title);
+        const value = titleInput.value.trim();
+        if (value) {
+            await onSave(value);
             closeModal(modal, modalOverlay);
         } else {
-            alert('Please enter a title for the project.');
+            alert('Please enter a value.');
         }
     });
 

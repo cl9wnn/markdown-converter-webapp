@@ -6,17 +6,19 @@ namespace Application.Services;
 
 public class DocumentsService(IDocumentsRepository documentRepository, MinioService minIoService)
 {
-    public async Task<Result> SaveProjectAsync(Guid accountId, string name, string content)
+
+    public async Task<Result> CreateProjectAsync(Guid accountId, string name)
     {
         var ctx = new CancellationTokenSource();
-        
-        var createResult = await documentRepository.CreateDocumentAsync(accountId, name);
 
+        var createResult = await documentRepository.CreateDocumentAsync(accountId, name);
+        
         if (!createResult.IsSuccess)
             return Result.Failure(createResult.ErrorMessage!);
-
-        var fileName = $"{createResult.Data}.md"; 
-
+        
+        var fileName = $"{createResult.Data}.md";
+        const string content = "Write something in markdown...";
+        
         try
         {
             await minIoService.UploadMarkdownTextAsync(content, fileName, ctx.Token);
@@ -36,6 +38,15 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
         return getResult.IsSuccess
             ? Result<ICollection<Document>>.Success(getResult.Data)
             : Result<ICollection<Document>>.Failure(getResult.ErrorMessage!)!;
+    }
+    
+    public async Task<Result<Document>> GetProjectAsync(Guid documentId)
+    {
+        var getResult = await documentRepository.GetDocumentAsync(documentId);
+        
+        return getResult.IsSuccess
+            ? Result<Document>.Success(getResult.Data)
+            : Result<Document>.Failure(getResult.ErrorMessage!)!;
     }
     
     public async Task<Result<string>> RenameProjectAsync(Guid documentId, string newName)

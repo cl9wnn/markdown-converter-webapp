@@ -2,6 +2,6 @@
 
 public class SaveProjectRequest
 {
-    public string? Name { get; set; }
+    public string? DocumentId { get; set; }
     public string? MdContent { get; set; }
 }

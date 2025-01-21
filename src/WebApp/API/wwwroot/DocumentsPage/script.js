@@ -1,13 +1,18 @@
-import {tokenStorage, showForm, createLoginForm, createRegisterForm} from "../Authorization/script.js";
+import {tokenStorage, showForm, createLoginForm} from "../Authorization/script.js";
+import { createModal } from "./modal.js";
 
+document.getElementById("createBtn").addEventListener("click",  async () => {
+        await createModal('Создать документ', async (title) => {
+            await createDocument(title);
+        });
+});
 
 document.addEventListener('DOMContentLoaded', async () => {
     const projects = await getProjects();
     await loadProjectTable(projects);
 });
 
-
-function loadProjectTable(projectArray) {
+export function loadProjectTable(projectArray) {
     
     const container = document.getElementById('projectTableContainer');
     container.id = 'projectTableContainer';
@@ -27,6 +32,7 @@ function loadProjectTable(projectArray) {
     table.appendChild(headerRow);
         
         projectArray.forEach(project => {
+            
         const row = document.createElement('tr');
 
         const nameCell = document.createElement('td');
@@ -40,11 +46,6 @@ function loadProjectTable(projectArray) {
 
         const actionsCell = document.createElement('td');
 
-        const downloadButton = document.createElement('button');
-        downloadButton.textContent = 'Download';
-        downloadButton.addEventListener('click', () => downloadDocument(project.documentId));
-        actionsCell.appendChild(downloadButton);
-
         const openButton = document.createElement('button');
         openButton.textContent = 'Open';
         openButton.addEventListener('click', () => openDocument(project.documentId));
@@ -52,12 +53,16 @@ function loadProjectTable(projectArray) {
 
         const renameButton = document.createElement('button');
         renameButton.textContent = 'Rename';
-        renameButton.addEventListener('click', () => renameDocument(project.documentId));
+        renameButton.addEventListener('click', () => {
+                createModal('Изменить название', async (newTitle) => {
+                    await renameProject(newTitle, project.documentId);
+                });
+            });
         actionsCell.appendChild(renameButton);
 
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
-        deleteButton.addEventListener('click', () => deleteProject(project.documentId));
+        deleteButton.addEventListener('click', () => deleteDocument(project.documentId));
         actionsCell.appendChild(deleteButton);
 
         row.appendChild(actionsCell);
@@ -70,7 +75,7 @@ function loadProjectTable(projectArray) {
 }
 
 
-async function getProjects() {
+export async function getProjects() {
     let token = tokenStorage.get();
 
     try {
@@ -102,42 +107,7 @@ async function getProjects() {
     }
 }
 
-async function renameProject(newName, documentId) {
-    
-    // newName из поля с окном изменения
-    let token = tokenStorage.get();
-    
-    try {
-        const response = await fetch(`/api/documents/rename`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                Name: newName,
-                DocumentId: documentId
-            })
-        });
-
-        if (response.ok) {
-            const newName = await response.json();
-            console.log("Изменено на" + newName);
-        } else if (response.status === 401) {
-            const loginSuccessful = await showForm(createLoginForm, '/auth/signin', 'Sign In');
-
-            if (loginSuccessful) {
-            }
-        } else {
-            const data = await response.json();
-            alert(data);
-        }
-    } catch (error) {
-        alert(error);
-    }
-}
-
-async function deleteProject(documentId) {
+async function deleteDocument(documentId) {
     let token = tokenStorage.get();
 
     try {
@@ -165,4 +135,75 @@ async function deleteProject(documentId) {
     } catch (error) {
         alert(error);
     }
-} 
+}
+
+async function openDocument(documentId) {
+   window.location.href = `documents/${documentId}`;
+}
+
+async function createDocument(title) {
+    let token = tokenStorage.get();
+    console.log('clicked');
+
+    try {
+        const response = await fetch(`/api/documents/create`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(title)
+        });
+
+        if (response.ok) {
+            
+        } else if (response.status === 401) {
+            const loginSuccessful = await showForm(createLoginForm, '/auth/signin', 'Sign In');
+
+            if (loginSuccessful) {
+            }
+        } else {
+            const data = await response.json();
+            alert(data);
+        }
+    } catch (error) {
+        alert(error);
+    }
+}
+
+async function renameProject(newName, documentId) {
+
+    let token = tokenStorage.get();
+
+    try {
+        const response = await fetch(`/api/documents/rename`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                NewName: newName,
+                DocumentId: documentId
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log("Изменено на " + data.newName);
+            const projects = await getProjects();
+            await loadProjectTable(projects);
+
+        } else if (response.status === 401) {
+            const loginSuccessful = await showForm(createLoginForm, '/auth/signin', 'Sign In');
+
+            if (loginSuccessful) {
+            }
+        } else {
+            const data = await response.json();
+            alert(data);
+        }
+    } catch (error) {
+        alert(error);
+    }
+}

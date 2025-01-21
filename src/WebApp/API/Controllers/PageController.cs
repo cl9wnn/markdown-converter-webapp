@@ -6,7 +6,7 @@ namespace API.Controllers;
 [ApiController]
 public class PageController: ControllerBase
 {
-    [HttpGet("/")]
+    [HttpGet("/documents/{documentId:guid}")]
     public IActionResult ShowMainPage()
     {
         return File("MainPage/index.html", "text/html");
