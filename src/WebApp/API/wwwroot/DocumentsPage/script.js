@@ -97,7 +97,7 @@ export async function getProjects() {
             }
         } else {
             const data = await response.json();
-            alert(data);
+            alert(data.error);
             return data;
         }
     } catch (error) {
@@ -110,13 +110,12 @@ async function deleteDocument(documentId) {
     let token = tokenStorage.get();
 
     try {
-        const response = await fetch(`/api/documents/delete`, {
+        const response = await fetch(`/api/documents/${documentId}/delete`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify( documentId )
+            }
         });
 
         if (response.ok) {
@@ -130,7 +129,7 @@ async function deleteDocument(documentId) {
             }
         } else {
             const data = await response.json();
-            alert(data);
+            alert(data.error);
         }
     } catch (error) {
         alert(error);
@@ -165,7 +164,7 @@ async function createDocument(title) {
             }
         } else {
             const data = await response.json();
-            alert(data);
+            alert(data.error);
         }
     } catch (error) {
         alert(error);
@@ -177,21 +176,17 @@ async function renameProject(newName, documentId) {
     let token = tokenStorage.get();
 
     try {
-        const response = await fetch(`/api/documents/rename`, {
+        const response = await fetch(`/api/documents/${documentId}/rename`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({
-                NewName: newName,
-                DocumentId: documentId
-            })
+            body: JSON.stringify(newName)
         });
 
         if (response.ok) {
             const data = await response.json();
-            console.log("Изменено на " + data.newName);
             const projects = await getProjects();
             await loadProjectTable(projects);
 
@@ -203,7 +198,7 @@ async function renameProject(newName, documentId) {
             }
         } else {
             const data = await response.json();
-            alert(data);
+            alert(data.error);
         }
     } catch (error) {
         alert(error);

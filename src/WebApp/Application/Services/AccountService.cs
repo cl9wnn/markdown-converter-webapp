@@ -49,4 +49,9 @@ public class AccountService(IAccountRepository accountRepository, JwtService jwt
 
         return Result<string>.Failure("Invalid password!"!)!;
     }
+
+    public async Task<bool> DoesUserExistAsync(Guid accountId)
+    { 
+        return await accountRepository.IsUserExistsById(accountId);
+    }
 }

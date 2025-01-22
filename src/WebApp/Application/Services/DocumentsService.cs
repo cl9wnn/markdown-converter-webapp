@@ -7,7 +7,7 @@ namespace Application.Services;
 public class DocumentsService(IDocumentsRepository documentRepository, MinioService minIoService)
 {
 
-    public async Task<Result> CreateProjectAsync(Guid accountId, string name)
+    public async Task<Result> CreateProjectAsync(Guid? accountId, string name)
     {
         var ctx = new CancellationTokenSource();
 
@@ -31,7 +31,7 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
         return Result.Success();
     }
 
-    public async Task<Result<ICollection<Document>>> GetUserProjectsAsync(Guid accountId)
+    public async Task<Result<ICollection<Document>>> GetUserProjectsAsync(Guid? accountId)
     {
         var getResult = await documentRepository.GetDocumentsAsync(accountId);
         
@@ -78,6 +78,11 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
         return deleteResult.IsSuccess
             ? Result<string>.Success(deleteResult.Data)
             : Result<string>.Failure(deleteResult.ErrorMessage!)!;
+    }
+    
+    public async Task<bool> DoesDocumentExistAsync(Guid documentId)
+    {
+        return await documentRepository.IsDocumentExistsById(documentId);
     }
     
 }

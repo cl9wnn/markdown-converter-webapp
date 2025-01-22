@@ -115,7 +115,7 @@ async function convertToHtml() {
             }
         } else {
             const data = await response.json();
-            alert(data);
+            alert(data.error);
         }
     } catch (error) {
         alert(error);
@@ -147,7 +147,7 @@ async function getMarkdown(documentId) {
             }
         } else {
             const data = await response.json();
-            alert(data);
+            alert(data.error);
         }
     } catch (error) {
         alert(error);
@@ -159,16 +159,13 @@ async function saveMarkdown(documentId) {
     const rawMd = document.getElementById("markdown-input").value;
 
     try {
-        const response = await fetch(`/api/markdown/save`, {
+        const response = await fetch(`/api/markdown/save/${documentId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({
-                MdContent:rawMd,
-                DocumentId: documentId
-            })
+            body: JSON.stringify(rawMd)
         });
 
         if (response.ok) {
@@ -180,7 +177,7 @@ async function saveMarkdown(documentId) {
             }
         } else {
             const data = await response.json();
-            alert(data);
+            alert(data.error);
         }
     } catch (error) {
         alert(error);
@@ -210,7 +207,8 @@ async function getDocument(documentId) {
             }
         } else {
             const data = await response.json();
-            alert(data);
+            alert(data.error.error);
+            window.location.href = '/';
         }
     } catch (error) {
         alert(error);

@@ -14,6 +14,9 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<DocumentsService>();
 builder.Services.AddScoped<IDocumentsRepository, DocumentsRepository>();
 
+builder.Services.AddScoped<DocumentAccessService>();
+builder.Services.AddScoped<IDocumentAccessRepository, DocumentAccessRepository>();
+
 builder.Services.AddScoped<MdService>();
 builder.Services.AddScoped<JwtService>();
 
@@ -25,6 +28,7 @@ builder.Services.AddScoped<MinioService>();
 builder.Services.AddDataBase(builder.Configuration);
 builder.Services.AddAuth(builder.Configuration);
 builder.Services.AddMdProcessor();
+builder.Services.AddFilters();
 
 var app = builder.Build();
 

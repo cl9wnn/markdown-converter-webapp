@@ -8,8 +8,11 @@ namespace Persistence.Repositories;
 
 public class DocumentsRepository(WebDbContext dbContext): IDocumentsRepository
 {
-    public async Task<Result<Guid>> CreateDocumentAsync(Guid accountId, string name)
+    public async Task<Result<Guid>> CreateDocumentAsync(Guid? accountId, string name)
     {
+        if (accountId == null)
+            return Result<Guid>.Failure("Account not found");
+        
         var accountEntity = await dbContext.Accounts.FirstOrDefaultAsync(a => a.AccountId == accountId);
         
         if (accountEntity == null)
@@ -61,8 +64,11 @@ public class DocumentsRepository(WebDbContext dbContext): IDocumentsRepository
         return Result<Document>.Success(document);
     }
     
-    public async Task<Result<ICollection<Document>>> GetDocumentsAsync(Guid accountId)
+    public async Task<Result<ICollection<Document>>> GetDocumentsAsync(Guid? accountId)
     {
+        if (accountId == null)
+            return Result<ICollection<Document>>.Failure("Account not found")!;
+        
         var documentEntities = await dbContext.Documents
             .Where(d => d.AuthorId == accountId)
             .ToListAsync();
@@ -90,5 +96,10 @@ public class DocumentsRepository(WebDbContext dbContext): IDocumentsRepository
         await dbContext.SaveChangesAsync();
         
         return Result<string>.Success(newName);
+    }
+    
+    public async Task<bool> IsDocumentExistsById(Guid documentId)
+    {
+       return await dbContext.Documents.AnyAsync(a => a.DocumentId == documentId);
     }
 }

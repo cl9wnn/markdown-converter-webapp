@@ -1,14 +1,20 @@
+using System.Web;
 using API.Contracts;
+using API.Extensions;
+using API.Filters;
 using Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
+
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class MarkdownController(MdService mdService): ControllerBase
 {
+    [ServiceFilter(typeof(UserExistsFilter))]
     [HttpPost("convert")]
     public async Task<IActionResult> GetHtml([FromBody] MarkdownRequest request)
     {
@@ -19,26 +25,26 @@ public class MarkdownController(MdService mdService): ControllerBase
             : BadRequest(new { Error = htmlResult.ErrorMessage });
     }
     
-    [HttpPost("save")]
-    public async Task<IActionResult> SaveDocumentAsync([FromBody] SaveProjectRequest request)
+    [ServiceFilter(typeof(UserExistsFilter))]
+    [ServiceFilter(typeof(DocumentExistsFilter))]
+    [ServiceFilter(typeof(ValidateAuthorFilter))]
+    [HttpPost("save/{documentId:guid}")]
+    public async Task<IActionResult> SaveDocumentAsync(Guid documentId, [FromBody] string mdContent)
     {
-        if (!Guid.TryParse(request.DocumentId, out var documentId) || request.MdContent == null)
-            return BadRequest(new { Error = "Invalid request" });
-        
-        var saveResult = await mdService.SaveMarkdownAsync(documentId, request.MdContent);
+        var saveResult = await mdService.SaveMarkdownAsync(documentId, mdContent);
         
         return saveResult.IsSuccess
             ? Ok()
             : BadRequest(new { Error = saveResult.ErrorMessage });
     }
     
-    
+    [ServiceFilter(typeof(UserExistsFilter))]
+    [ServiceFilter(typeof(DocumentExistsFilter))]
+    [ServiceFilter(typeof(ValidateAuthorFilter))]
     [HttpGet("get")]
     public async Task<IActionResult> GetMarkdownFile([FromQuery] string documentId)
     {
-        if (!Guid.TryParse(documentId, out var parsedDocumentId))
-            return BadRequest(new { Error = "Invalid request" });
-
+        var parsedDocumentId = Guid.Parse(documentId);
         var getResult = await mdService.GetMarkdownAsync(parsedDocumentId);
 
         return getResult.IsSuccess

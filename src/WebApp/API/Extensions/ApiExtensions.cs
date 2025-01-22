@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using API.Filters;
 using Application.Models;
 using Markdown.Abstract_classes;
 using Markdown.Classes;
@@ -47,6 +48,15 @@ public static class ApiExtensions
             });
         
         return serviceCollection;
+    }
+
+    public static IServiceCollection AddFilters(this IServiceCollection services)
+    {
+        services.AddScoped<UserExistsFilter>();
+        services.AddScoped<DocumentExistsFilter>();
+        services.AddScoped<ValidateAuthorFilter>();
+
+        return services;
     }
     
     public static IServiceCollection AddMdProcessor(this IServiceCollection services)

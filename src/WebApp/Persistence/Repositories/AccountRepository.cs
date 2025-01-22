@@ -19,7 +19,7 @@ public class AccountRepository(WebDbContext dbContext): IAccountRepository
             PasswordHash = account.PasswordHash
         };
         
-        var isAccExists = await IsUserExists(accountEntity.Email!);
+        var isAccExists = await IsUserExistsByEmail(accountEntity.Email!);
 
         if (isAccExists)
             return Result.Failure($"User {accountEntity.Email} not available");
@@ -47,9 +47,15 @@ public class AccountRepository(WebDbContext dbContext): IAccountRepository
             
         return Result<Account>.Success(account)!;
     }
-
-    private async Task<bool> IsUserExists(string email)
+    
+    public async Task<bool> IsUserExistsById(Guid accountId)
+    {
+        return await dbContext.Accounts.AnyAsync(a => a.AccountId == accountId);
+    }
+    
+    private async Task<bool> IsUserExistsByEmail(string email)
     {
         return await dbContext.Accounts.AnyAsync(a => a.Email == email);
     }
+    
 }
