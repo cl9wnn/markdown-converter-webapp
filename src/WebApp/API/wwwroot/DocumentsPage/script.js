@@ -1,22 +1,25 @@
 import {tokenStorage, showForm, createLoginForm} from "../Authorization/script.js";
 import { createModal } from "./modal.js";
 
-document.getElementById("createBtn").addEventListener("click",  async () => {
-        await createModal('Создать документ', async (title) => {
-            await createDocument(title);
-        });
-});
-
 document.addEventListener('DOMContentLoaded', async () => {
     const projects = await getProjects();
     await loadProjectTable(projects);
 });
 
+
+document.getElementById("createBtn").addEventListener("click",  async () => {
+        await createModal('Создать документ', async (title) => {
+            await createDocument(title);
+        });
+});
 export function loadProjectTable(projectArray) {
-    
     const container = document.getElementById('projectTableContainer');
-    container.id = 'projectTableContainer';
-    document.body.appendChild(container);
+    container.innerHTML = '';  
+
+    if (!Array.isArray(projectArray) || projectArray.length === 0) {
+        container.textContent = 'No projects available.';
+        return;
+    }
 
     const table = document.createElement('table');
     table.setAttribute('border', '1');
@@ -30,9 +33,8 @@ export function loadProjectTable(projectArray) {
         headerRow.appendChild(th);
     });
     table.appendChild(headerRow);
-        
-        projectArray.forEach(project => {
-            
+
+    projectArray.forEach(project => {
         const row = document.createElement('tr');
 
         const nameCell = document.createElement('td');
@@ -54,10 +56,10 @@ export function loadProjectTable(projectArray) {
         const renameButton = document.createElement('button');
         renameButton.textContent = 'Rename';
         renameButton.addEventListener('click', () => {
-                createModal('Изменить название', async (newTitle) => {
-                    await renameProject(newTitle, project.documentId);
-                });
+            createModal('Изменить название', async (newTitle) => {
+                await renameProject(newTitle, project.documentId);
             });
+        });
         actionsCell.appendChild(renameButton);
 
         const deleteButton = document.createElement('button');
@@ -66,14 +68,11 @@ export function loadProjectTable(projectArray) {
         actionsCell.appendChild(deleteButton);
 
         row.appendChild(actionsCell);
-
         table.appendChild(row);
     });
 
-    container.innerHTML = '';
     container.appendChild(table);
 }
-
 
 export async function getProjects() {
     let token = tokenStorage.get();
@@ -89,21 +88,21 @@ export async function getProjects() {
 
         if (response.ok) {
             const responseData = await response.json();
+            await loadProjectTable(responseData.projects);
             return responseData.projects;
         } else if (response.status === 401) {
-            const loginSuccessful = await showForm(createLoginForm, '/auth/signin', 'Sign In');
-
+            const loginSuccessful = await showForm(createLoginForm);
             if (loginSuccessful) {
-                return await getProjects(); 
+                return await getProjects();
             }
         } else {
             const data = await response.json();
             alert(data);
-            return data; 
+            return data;
         }
     } catch (error) {
         alert(error);
-        throw error; 
+        throw error;
     }
 }
 
@@ -127,6 +126,7 @@ async function deleteDocument(documentId) {
             const loginSuccessful = await showForm(createLoginForm, '/auth/signin', 'Sign In');
 
             if (loginSuccessful) {
+                await deleteDocument(documentId);
             }
         } else {
             const data = await response.json();
@@ -143,7 +143,6 @@ async function openDocument(documentId) {
 
 async function createDocument(title) {
     let token = tokenStorage.get();
-    console.log('clicked');
 
     try {
         const response = await fetch(`/api/documents/create`, {
@@ -156,11 +155,13 @@ async function createDocument(title) {
         });
 
         if (response.ok) {
-            
+            const projects = await getProjects();
+            await loadProjectTable(projects);
         } else if (response.status === 401) {
             const loginSuccessful = await showForm(createLoginForm, '/auth/signin', 'Sign In');
 
             if (loginSuccessful) {
+                await createDocument(title);
             }
         } else {
             const data = await response.json();
@@ -198,6 +199,7 @@ async function renameProject(newName, documentId) {
             const loginSuccessful = await showForm(createLoginForm, '/auth/signin', 'Sign In');
 
             if (loginSuccessful) {
+                await renameProject(newName, documentId);
             }
         } else {
             const data = await response.json();

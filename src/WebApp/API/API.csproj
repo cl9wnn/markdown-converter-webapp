@@ -32,12 +32,19 @@
       <_ContentIncludedByDefault Remove="wwwroot\RegisterPage\index.html" />
       <_ContentIncludedByDefault Remove="wwwroot\RegisterPage\script.js" />
       <_ContentIncludedByDefault Remove="wwwroot\RegisterPage\style.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\Header\script.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\Header\style.css" />
     </ItemGroup>
 
     <ItemGroup>
       <Reference Include="Markdown">
         <HintPath>..\..\MarkdownProcessor\MarkdownProcessor\bin\Debug\net8.0\Markdown.dll</HintPath>
       </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="wwwroot\StartPage\index.html" />
+      <None Include="wwwroot\StartPage\style.css" />
     </ItemGroup>
 
 </Project>

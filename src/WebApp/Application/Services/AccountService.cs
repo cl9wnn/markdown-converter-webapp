@@ -7,7 +7,7 @@ namespace Application.Services;
 
 public class AccountService(IAccountRepository accountRepository, JwtService jwtService)
 {
-    public async Task<Result> RegisterAsync(string email, string password, string firstName)
+    public async Task<Result<string>> RegisterAsync(string email, string password, string firstName)
     {
         var account = new Account
         {
@@ -22,9 +22,12 @@ public class AccountService(IAccountRepository accountRepository, JwtService jwt
         
         var addResult = await accountRepository.AddUserAsync(account);
 
-        return addResult.IsSuccess
-            ? Result.Success()
-            : Result.Failure(addResult.ErrorMessage!);
+        if (addResult.IsSuccess)
+        {
+            var token = jwtService.GenerateJwtToken(account!);
+            return Result<string>.Success(token);
+        }
+        return Result<string>.Failure(addResult.ErrorMessage!)!;
     }
 
     public async Task<Result<string>?> LoginAsync(string email, string password)

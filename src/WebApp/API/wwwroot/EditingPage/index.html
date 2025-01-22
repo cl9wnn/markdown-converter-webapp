@@ -2,24 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="/MainPage/style.css">
+    <link rel="stylesheet" href="/EditingPage/style.css">
     <link rel="stylesheet" href="/Authorization/style.css">
-    <link rel="stylesheet" href="/Header/style.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <title>Title</title>
 </head>
-
 <body>
-<header>
-    <div class="header-buttons"></div>
-</header>
 <div class="main-container">
     <div class="description-container">
         <h1 id="projectName"></h1>
-        <p>Вставьте или введите свой markdown текст и он будет отображен в формате HTML. Скачайте или скопируйте полученный HTML-код.</p>
     </div>
 
     <div class="form-container">
         <button id="saveDocumentBtn">Save project</button>
+        <button id="documentsBtn">My documents</button>
 
         <div class ="form-area">
             <form id="markdown-form" method="post">
@@ -34,8 +30,6 @@
         <button id="sendBtn" type="submit"> send</button>
     </div>
 </div>
-<script type="module" src="/MainPage/script.js"></script>
-<script type="module" src="/Header/script.js"></script>
-
+<script type="module" src="/EditingPage/script.js"></script>
 </body>
 </html>

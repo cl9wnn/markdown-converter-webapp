@@ -23,7 +23,7 @@ public class AuthController(AccountService accountService): ControllerBase
         var registerResult = await accountService.RegisterAsync(request.Email!, request.Password!, request.FirstName!);
 
         return registerResult.IsSuccess 
-            ? Ok()
+            ? Ok(new { Token = registerResult.Data })
             : BadRequest(new { Error = registerResult.ErrorMessage });
     }
     

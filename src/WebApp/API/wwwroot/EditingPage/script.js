@@ -4,6 +4,7 @@ const sendBtn = document.getElementById("sendBtn");
 const copyBtn = document.getElementById("copyBtn");
 const saveHtmlBtn = document.getElementById("saveBtn");
 const saveDocumentBtn = document.getElementById("saveDocumentBtn");
+const documentsBtn = document.getElementById("documentsBtn");
 
 let documentId;
 document.addEventListener('DOMContentLoaded', async () => {
@@ -18,6 +19,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 });
 
+documentsBtn.addEventListener('click', () => {
+    window.location.href = '/documents';
+});
 
 saveDocumentBtn.addEventListener('click', async (event) => {
     event.preventDefault();

@@ -1,3 +1,38 @@
+﻿body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #f0f0f0, #d9d9d9);
+}
+.container {
+    text-align: center;
+    padding: 30px;
+    border-radius: 10px;
+}
+h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+button {
+    font-size: 1rem;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background: #007BFF;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
 /*------------------   MODAL WINDOW   ------------------*/
 
 .modal {

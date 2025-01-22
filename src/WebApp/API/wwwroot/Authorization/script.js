@@ -77,22 +77,7 @@ export const createLoginForm = (onClose) => {
         className: 'submit-button'
     });
 
-    const registerText = createElement('p', {
-        textContent: 'Еще не зарегистрированы?',
-        className: 'register-text'
-    });
-
-    const registerLink = createElement('a', {
-        textContent: 'Зарегистрироваться',
-        className: 'register-link',
-        onClick: async (event) => {
-            event.preventDefault();
-            onClose();
-            await showForm(createRegisterForm);
-        }
-    });
-
-    [emailWrapper, passwordWrapper, submitButton, registerText, registerLink].forEach(el => form.appendChild(el));
+    [emailWrapper, passwordWrapper, submitButton].forEach(el => form.appendChild(el));
 
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -103,8 +88,8 @@ export const createLoginForm = (onClose) => {
         if (!isEmailValid || !isPasswordValid) return;
 
         const formData = Object.fromEntries(new FormData(form).entries());
-        await handleSubmit('/auth/login', formData, true);
-        onClose();
+        const isSuccess = await handleSubmit('/auth/login', formData, true);
+        onClose(isSuccess); 
     });
 
     return form;
@@ -123,22 +108,7 @@ export const createRegisterForm = (onClose) => {
         className: 'submit-button'
     });
 
-    const loginText = createElement('p', {
-        textContent: 'Уже есть аккаунт?',
-        className: 'register-text'
-    });
-
-    const loginLink = createElement('a', {
-        textContent: 'Войти',
-        className: 'register-link',
-        onClick: async (event) => {
-            event.preventDefault();
-            onClose();
-            await showForm(createLoginForm);
-        }
-    });
-
-    [emailWrapper, firstNameWrapper, passwordWrapper, submitButton, loginText, loginLink].forEach(el => form.appendChild(el));
+    [emailWrapper, firstNameWrapper, passwordWrapper, submitButton].forEach(el => form.appendChild(el));
 
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -150,13 +120,12 @@ export const createRegisterForm = (onClose) => {
         if (!isEmailValid || !isFirstNameValid || !isPasswordValid) return;
 
         const formData = Object.fromEntries(new FormData(form).entries());
-        await handleSubmit('/auth/register', formData, false);
-        onClose();
+        const isSuccess = await handleSubmit('/auth/register', formData, true);
+        onClose(isSuccess); 
     });
 
     return form;
 };
-
 export const tokenStorage = {
     save: (token) => localStorage.setItem('jwtToken', token),
     get: () => localStorage.getItem('jwtToken'),
@@ -193,15 +162,23 @@ const createPopup = (onClose) => {
 
 export const showForm = (createFormMethod) => {
     return new Promise((resolve) => {
+        const existingOverlay = document.querySelector('.overlay');
+        if (existingOverlay) {
+            document.body.removeChild(existingOverlay);
+        }
         const overlay = createOverlay();
         const popup = createPopup(() => {
             document.body.removeChild(overlay);
-            resolve(false);
+            resolve({ success: false, message: 'Popup closed by user' });
         });
 
-        const form = createFormMethod(() => {
+        const form = createFormMethod(async (isSuccess) => {
             document.body.removeChild(overlay);
-            resolve(true);
+            if (isSuccess) {
+                resolve({ success: true, message: 'Operation completed successfully' });
+            } else {
+                resolve({ success: false, message: 'Operation failed' });
+            }
         });
 
         popup.appendChild(form);
@@ -264,7 +241,10 @@ const handleSubmit = async (path, data, shouldHandleToken = false) => {
             const { token } = responseData;
             tokenStorage.save(token);
         }
+
+        return true; 
     } catch (error) {
-        alert(error.message);
+        console.error(error);
+        return false; 
     }
 };

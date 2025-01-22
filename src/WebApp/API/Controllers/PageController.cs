@@ -9,7 +9,13 @@ public class PageController: ControllerBase
     [HttpGet("/documents/{documentId:guid}")]
     public IActionResult ShowMainPage()
     {
-        return File("MainPage/index.html", "text/html");
+        return File("EditingPage/index.html", "text/html");
+    }
+
+    [HttpGet("/")]
+    public IActionResult ShowStartPage()
+    {
+        return File("StartPage/index.html", "text/html");
     }
     
     [HttpGet("/documents")]
