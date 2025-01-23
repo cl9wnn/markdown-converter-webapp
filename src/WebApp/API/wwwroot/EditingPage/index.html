@@ -5,17 +5,21 @@
     <link rel="stylesheet" href="/EditingPage/style.css">
     <link rel="stylesheet" href="/Authorization/style.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <title>Title</title>
+    <title>Editor</title>
 </head>
 <body>
 <div class="main-container">
     <div class="description-container">
+        <div class="redactor-buttons">
+            <button id="saveDocumentBtn">Save</button>
+            <button id="renameDocumentBtn">Rename</button>
+            <button id="deleteDocumentBtn">Delete</button>
+            <button id="documentsBtn">My documents</button>
+        </div>
         <h1 id="projectName"></h1>
     </div>
 
     <div class="form-container">
-        <button id="saveDocumentBtn">Save project</button>
-        <button id="documentsBtn">My documents</button>
 
         <div class ="form-area">
             <form id="markdown-form" method="post">
@@ -25,9 +29,9 @@
         </div>
         <div class="html-buttons">
             <button id="copyBtn" type="submit"> Copy</button>
-            <button id="saveBtn" type="submit"> Save</button>
+            <button id="saveBtn" type="submit"> Download</button>
         </div>
-        <button id="sendBtn" type="submit"> send</button>
+        <button id="sendBtn" type="submit"> convert</button>
     </div>
 </div>
 <script type="module" src="/EditingPage/script.js"></script>

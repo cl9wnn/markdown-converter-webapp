@@ -1,10 +1,16 @@
 import {tokenStorage, showForm, createLoginForm} from "../Authorization/script.js";
+import {createModal} from "../DocumentsPage/modal.js";
 
 const sendBtn = document.getElementById("sendBtn");
 const copyBtn = document.getElementById("copyBtn");
 const saveHtmlBtn = document.getElementById("saveBtn");
-const saveDocumentBtn = document.getElementById("saveDocumentBtn");
 const documentsBtn = document.getElementById("documentsBtn");
+
+const saveDocumentBtn = document.getElementById("saveDocumentBtn");
+const renameDocumentBtn = document.getElementById("renameDocumentBtn");
+const deleteDocumentBtn = document.getElementById("deleteDocumentBtn");
+
+
 
 let documentId;
 document.addEventListener('DOMContentLoaded', async () => {
@@ -16,6 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await updateProjectPage(project);
     
     await getMarkdown(documentId);
+    await convertToHtml();
 
 });
 
@@ -23,15 +30,26 @@ documentsBtn.addEventListener('click', () => {
     window.location.href = '/documents';
 });
 
+sendBtn.addEventListener("click",  async () => {
+    await convertToHtml();
+});
+
 saveDocumentBtn.addEventListener('click', async (event) => {
     event.preventDefault();
     await saveMarkdown(documentId);
 });
 
-sendBtn.addEventListener("click",  async () => {
-    await convertToHtml();
+renameDocumentBtn.addEventListener('click', () => {
+    createModal('Изменить название', async (newTitle) => {
+        await renameProject(newTitle, documentId);
+    });
 });
-
+    
+deleteDocumentBtn.addEventListener('click', async (event) => {
+    event.preventDefault();
+    console.log('clicked');
+    await deleteDocument(documentId);
+});
 copyBtn.addEventListener("click", async () => {
     const htmlContent = document.getElementById("markdown-result").innerHTML;
 
@@ -215,7 +233,72 @@ async function getDocument(documentId) {
     }
 }
 
+async function deleteDocument(documentId) {
+    let token = tokenStorage.get();
+
+    try {
+        const response = await fetch(`/api/documents/${documentId}/delete`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (response.ok) {
+            window.location.href = '/documents';
+        } else if (response.status === 401) {
+            const loginSuccessful = await showForm(createLoginForm, '/auth/signin', 'Sign In');
+
+            if (loginSuccessful) {
+                await deleteDocument(documentId);
+            }
+        } else {
+            const data = await response.json();
+            alert(data.error);
+        }
+    } catch (error) {
+        alert(error);
+    }
+}
+
+async function renameProject(newName, documentId) {
+
+    let token = tokenStorage.get();
+
+    try {
+        const response = await fetch(`/api/documents/${documentId}/rename`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(newName)
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            
+            const project = await getDocument(documentId);
+            await updateProjectPage(project);      
+        
+        } else if (response.status === 401) {
+            const loginSuccessful = await showForm(createLoginForm, '/auth/signin', 'Sign In');
+
+            if (loginSuccessful) {
+                await renameProject(newName, documentId);
+            }
+        } else {
+            const data = await response.json();
+            alert(data.error);
+        }
+    } catch (error) {
+        alert(error);
+    }
+}
+
 async function updateProjectPage(project){
     const projectName = document.getElementById("projectName");
     projectName.innerHTML = project.name;
 }
+

@@ -17,7 +17,7 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
             return Result.Failure(createResult.ErrorMessage!);
         
         var fileName = $"{createResult.Data}.md";
-        const string content = "Write something in markdown...";
+        const string content = "_Write something in markdown..._";
         
         try
         {
