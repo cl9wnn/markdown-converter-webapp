@@ -1,5 +1,5 @@
 import {tokenStorage, showForm, createLoginForm} from "../Authorization/script.js";
-import { createModal } from "./modal.js";
+import {createModal } from "./modal.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
     const projects = await getProjects();

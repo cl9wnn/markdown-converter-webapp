@@ -1,4 +1,5 @@
-﻿using Core.interfaces;
+﻿using Application.Models;
+using Core.interfaces;
 using Core.Models;
 using Core.Utils;
 
@@ -40,13 +41,25 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
             : Result<ICollection<Document>>.Failure(getResult.ErrorMessage!)!;
     }
     
-    public async Task<Result<Document>> GetProjectAsync(Guid documentId)
+    public async Task<Result<DocumentDto>> GetProjectAsync(Guid documentId)
     {
-        var getResult = await documentRepository.GetDocumentAsync(documentId);
+        var authorNameResult = await documentRepository.GetAuthorNameAsync(documentId);
         
+        if (!authorNameResult.IsSuccess)
+            return Result<DocumentDto>.Failure(authorNameResult.ErrorMessage!)!;
+        
+        var getResult = await documentRepository.GetDocumentAsync(documentId);
+
+        var documentDto = new DocumentDto
+        {
+            DocumentId = getResult.Data.DocumentId,
+            AuthorName = authorNameResult.Data,
+            Name = getResult.Data.Name,
+        };
+
         return getResult.IsSuccess
-            ? Result<Document>.Success(getResult.Data)
-            : Result<Document>.Failure(getResult.ErrorMessage!)!;
+            ? Result<DocumentDto>.Success(documentDto)
+            : Result<DocumentDto>.Failure(getResult.ErrorMessage!)!;
     }
     
     public async Task<Result<string>> RenameProjectAsync(Guid documentId, string newName)

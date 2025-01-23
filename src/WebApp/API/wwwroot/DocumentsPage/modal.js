@@ -18,7 +18,7 @@
     titleInput.className = 'modal-input';
 
     const saveButton = document.createElement('button');
-    saveButton.textContent = 'Save';
+    saveButton.textContent = 'Send';
     saveButton.className = 'modal-save-button';
     saveButton.addEventListener('click', async () => {
         const value = titleInput.value.trim();

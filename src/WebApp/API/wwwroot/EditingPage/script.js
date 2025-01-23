@@ -1,5 +1,7 @@
 import {tokenStorage, showForm, createLoginForm} from "../Authorization/script.js";
 import {createModal} from "../DocumentsPage/modal.js";
+import {createAccessModal} from "./accessModal.js";
+
 
 const sendBtn = document.getElementById("sendBtn");
 const copyBtn = document.getElementById("copyBtn");
@@ -9,7 +11,7 @@ const documentsBtn = document.getElementById("documentsBtn");
 const saveDocumentBtn = document.getElementById("saveDocumentBtn");
 const renameDocumentBtn = document.getElementById("renameDocumentBtn");
 const deleteDocumentBtn = document.getElementById("deleteDocumentBtn");
-
+const accessBtn = document.getElementById("accessBtn");
 
 
 let documentId;
@@ -47,9 +49,15 @@ renameDocumentBtn.addEventListener('click', () => {
     
 deleteDocumentBtn.addEventListener('click', async (event) => {
     event.preventDefault();
-    console.log('clicked');
     await deleteDocument(documentId);
 });
+
+accessBtn.addEventListener('click', async (event) => {
+    createAccessModal('Дать доступ', async (inputData) => {
+        await giveAccess(inputData, documentId);
+    });
+});
+
 copyBtn.addEventListener("click", async () => {
     const htmlContent = document.getElementById("markdown-result").innerHTML;
 
@@ -297,8 +305,42 @@ async function renameProject(newName, documentId) {
     }
 }
 
+async function giveAccess(inputData, documentId){
+    let token = tokenStorage.get();
+
+    try {
+        const response = await fetch(`/api/documentAccess/${documentId}/set-permission`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                permission: inputData.role,
+                email: inputData.email
+            })
+        });
+
+        if (response.ok) {
+        } else if (response.status === 401) {
+            const loginSuccessful = await showForm(createLoginForm, '/auth/signin', 'Sign In');
+
+            if (loginSuccessful) {
+                await giveAccess(inputData, documentId);
+            }
+        } else {
+            const data = await response.json();
+            alert(data.error);
+        }
+    } catch (error) {
+        alert(error);
+    }
+}
+
 async function updateProjectPage(project){
     const projectName = document.getElementById("projectName");
+    const authorName = document.getElementById("authorText");
     projectName.innerHTML = project.name;
+    authorName.innerHTML = `Author: ${project.authorName}`;
 }
 

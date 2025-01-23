@@ -102,4 +102,17 @@ public class DocumentsRepository(WebDbContext dbContext): IDocumentsRepository
     {
        return await dbContext.Documents.AnyAsync(a => a.DocumentId == documentId);
     }
+
+    public async Task<Result<string>> GetAuthorNameAsync(Guid documentId)
+    {
+        var documentEntity = await dbContext.Documents.Include(documentEntity => documentEntity.Author).FirstOrDefaultAsync(d => d.DocumentId == documentId);
+        
+        if (documentEntity == null)
+            return Result<string>.Failure("Document not found")!;
+        
+        var author = await dbContext.Accounts
+            .FirstOrDefaultAsync(a => a.AccountId == documentEntity.AuthorId);
+        
+        return Result<string>.Success(author!.FirstName!);
+    }
 }
