@@ -7,5 +7,5 @@ public class AccountEntity
     public string? FirstName { get; set; }
     public string? PasswordHash { get; set; }
     public ICollection<DocumentEntity> Documents { get; set; } = new List<DocumentEntity>();
-
+    public ICollection<DocumentShareEntity> SharedDocuments { get; set; } = new List<DocumentShareEntity>();
 }

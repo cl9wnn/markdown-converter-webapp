@@ -50,6 +50,15 @@ public class AccountService(IAccountRepository accountRepository, JwtService jwt
         return Result<string>.Failure("Invalid password!"!)!;
     }
 
+    public async Task<Result<Guid>> GetAccountIdByEmail(string email)
+    {
+        var accountResult = await accountRepository.GetByEmailAsync(email);
+        
+        return accountResult.IsSuccess
+            ? Result<Guid>.Success(accountResult.Data!.AccountId)
+            : Result<Guid>.Failure(accountResult.ErrorMessage!)!;
+    }
+
     public async Task<bool> DoesUserExistAsync(Guid accountId)
     { 
         return await accountRepository.IsUserExistsById(accountId);

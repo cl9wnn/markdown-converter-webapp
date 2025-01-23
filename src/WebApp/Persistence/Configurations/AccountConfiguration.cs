@@ -4,7 +4,7 @@ using Persistence.Entities;
 
 namespace Persistence.Configurations;
 
-public class UserConfiguration: IEntityTypeConfiguration<AccountEntity>
+public class AccountConfiguration: IEntityTypeConfiguration<AccountEntity>
 {
     public void Configure(EntityTypeBuilder<AccountEntity> builder)
     {
@@ -20,5 +20,14 @@ public class UserConfiguration: IEntityTypeConfiguration<AccountEntity>
 
         builder.Property(a => a.PasswordHash)
             .IsRequired(); 
+        
+        builder.HasMany(a => a.Documents)
+            .WithOne(d => d.Author)
+            .HasForeignKey(d => d.AuthorId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasMany(a => a.SharedDocuments)
+            .WithOne(ds => ds.Account)
+            .HasForeignKey(ds => ds.AccountId);
     }
 }

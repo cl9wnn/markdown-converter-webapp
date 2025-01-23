@@ -21,5 +21,9 @@ public class DocumentConfiguration : IEntityTypeConfiguration<DocumentEntity>
 
         builder.Property(d => d.CreatedAt)
             .IsRequired(); 
+        
+        builder.HasMany(d => d.SharedWith)
+            .WithOne(ds => ds.Document)
+            .HasForeignKey(ds => ds.DocumentId);
     }
 }
