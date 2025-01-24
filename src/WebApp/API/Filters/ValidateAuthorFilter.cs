@@ -30,7 +30,7 @@ public class ValidateAuthorFilter(DocumentAccessService documentAccessService) :
 
         if (!isAuthor)
         {
-            context.Result = new BadRequestObjectResult(new { Error = "It is not your document!" });
+            context.Result = new ForbidResult();
             return; 
         }
 

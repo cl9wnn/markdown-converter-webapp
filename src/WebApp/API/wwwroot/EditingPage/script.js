@@ -229,13 +229,16 @@ async function getDocument(documentId) {
             if (loginSuccessful) {
                 return await getDocument(documentId);
             }
-        } else {
+        }
+        else if (response.status === 403) {
+            window.location.href = '/forbidden';
+        }
+        else {
             const data = await response.json();
-            alert(data.error.error);
-            window.location.href = '/';
+            alert(data.error);
         }
     } catch (error) {
-        alert(error);
+        alert(error.error);
     }
 }
 

@@ -4,6 +4,7 @@ using Core.interfaces;
 using Persistence;
 using Persistence.Repositories;
 using API.Extensions;
+using API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
@@ -32,6 +33,7 @@ builder.Services.AddFilters();
 
 var app = builder.Build();
 
+app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseStaticFiles();
 app.MapControllers();
 app.UseAuthentication();

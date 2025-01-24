@@ -4,7 +4,6 @@ using Application.Services;
 using Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Http.Logging;
 
 namespace API.Controllers;
 
