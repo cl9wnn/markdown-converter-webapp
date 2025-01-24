@@ -47,4 +47,8 @@
       <None Include="wwwroot\StartPage\style.css" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="wwwroot\Resources\" />
+    </ItemGroup>
+
 </Project>

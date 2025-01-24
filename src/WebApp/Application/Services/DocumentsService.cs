@@ -32,7 +32,7 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
         return Result.Success();
     }
 
-    public async Task<Result<ICollection<Document>>> GetUserProjectsAsync(Guid? accountId)
+    public async Task<Result<ICollection<Document>>> GetUserDocumentsAsync(Guid? accountId)
     {
         var getResult = await documentRepository.GetDocumentsAsync(accountId);
         
@@ -41,7 +41,7 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
             : Result<ICollection<Document>>.Failure(getResult.ErrorMessage!)!;
     }
     
-    public async Task<Result<DocumentDto>> GetProjectAsync(Guid documentId)
+    public async Task<Result<DocumentDto>> GetDocumentAsync(Guid documentId)
     {
         var authorNameResult = await documentRepository.GetAuthorNameAsync(documentId);
         

@@ -10,9 +10,6 @@ public class DocumentsRepository(WebDbContext dbContext): IDocumentsRepository
 {
     public async Task<Result<Guid>> CreateDocumentAsync(Guid? accountId, string name)
     {
-        if (accountId == null)
-            return Result<Guid>.Failure("Account not found");
-        
         var accountEntity = await dbContext.Accounts.FirstOrDefaultAsync(a => a.AccountId == accountId);
         
         if (accountEntity == null)
@@ -66,13 +63,9 @@ public class DocumentsRepository(WebDbContext dbContext): IDocumentsRepository
     
     public async Task<Result<ICollection<Document>>> GetDocumentsAsync(Guid? accountId)
     {
-        if (accountId == null)
-            return Result<ICollection<Document>>.Failure("Account not found")!;
-        
         var documentEntities = await dbContext.Documents
             .Where(d => d.AuthorId == accountId)
             .ToListAsync();
-        
         
         var documents = documentEntities.Select(documentEntity => new Document
         {

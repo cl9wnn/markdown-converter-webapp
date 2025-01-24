@@ -8,7 +8,5 @@ public interface IAccountRepository
      Task<Result> AddUserAsync(Account accountEntity);
      Task<Result<Account?>> GetByEmailAsync(string email);
      Task<bool> IsUserExistsById(Guid accountId);
-
-
-
+     Task<Result<Account>> GetByAccountIdAsync(Guid accountId);
 }

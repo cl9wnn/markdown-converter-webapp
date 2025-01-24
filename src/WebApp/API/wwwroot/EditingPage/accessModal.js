@@ -1,4 +1,4 @@
-﻿export function createAccessModal(titleText, onSave) {
+﻿export function createAccessModal(titleText, onSave, defaultEmail = '') {
     const modal = document.createElement('div');
     modal.className = 'modal';
 
@@ -16,6 +16,7 @@
     emailInput.id = 'emailInput';
     emailInput.placeholder = 'Enter your email';
     emailInput.className = 'modal-input';
+    emailInput.value = defaultEmail; 
 
     const roleSelect = document.createElement('select');
     roleSelect.id = 'roleSelect';
@@ -26,16 +27,12 @@
     readerOption.textContent = 'Reader';
 
     const editorOption = document.createElement('option');
-    editorOption.value = '2'; 
+    editorOption.value = '2';
     editorOption.textContent = 'Editor';
-
-    const noAccessOption = document.createElement('option');
-    noAccessOption.value = '3';
-    noAccessOption.textContent = 'No Access';
+    
 
     roleSelect.appendChild(readerOption);
     roleSelect.appendChild(editorOption);
-    roleSelect.appendChild(noAccessOption);
 
     const saveButton = document.createElement('button');
     saveButton.textContent = 'Save';

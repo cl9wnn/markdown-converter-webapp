@@ -27,11 +27,11 @@ public class DocumentsController(DocumentsService documentsService): ControllerB
     
     [ServiceFilter(typeof(UserExistsFilter))]
     [HttpGet("get")]
-    public async Task<IActionResult> GetDocumentsAsync()
+    public async Task<IActionResult> GetAllDocumentsAsync()
     {
         var accountId = HttpContext.GetAccountId();
         
-        var getResult = await documentsService.GetUserProjectsAsync(accountId);
+        var getResult = await documentsService.GetUserDocumentsAsync(accountId);
         
         return getResult.IsSuccess
             ? Ok(new {Projects = getResult.Data})
@@ -44,7 +44,7 @@ public class DocumentsController(DocumentsService documentsService): ControllerB
     [HttpGet("{documentId:guid}")]
     public async Task<IActionResult> GetDocumentAsync(Guid documentId)
     {
-        var getDocumentResult = await documentsService.GetProjectAsync(documentId);
+        var getDocumentResult = await documentsService.GetDocumentAsync(documentId);
         
         return getDocumentResult.IsSuccess
             ? Ok(new {Project = getDocumentResult.Data})

@@ -1,4 +1,5 @@
 ﻿using Core.interfaces;
+using Core.Models;
 using Core.Utils;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Entities;
@@ -83,5 +84,21 @@ public class DocumentAccessRepository(WebDbContext dbContext): IDocumentAccessRe
         await dbContext.SaveChangesAsync();
         
         return Result.Success();
+    }
+
+    public async Task<Result<ICollection<Permission>>> GetAllDocumentPermissionsAsync(Guid documentId)
+    {
+        var documentPermissions = await dbContext.DocumentShares
+            .Where(dp => dp.DocumentId == documentId)
+            .ToListAsync();
+
+        var documentPermissionsList = documentPermissions.Select(dp => new Permission
+        {
+            PermissionId = dp.PermissionId,
+            DocumentId = dp.DocumentId,
+            AccountId = dp.AccountId
+        }).ToList();
+        
+        return Result<ICollection<Permission>>.Success(documentPermissionsList);
     }
 }

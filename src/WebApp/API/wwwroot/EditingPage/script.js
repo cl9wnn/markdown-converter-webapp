@@ -1,7 +1,6 @@
 import {tokenStorage, showForm, createLoginForm} from "../Authorization/script.js";
 import {createModal} from "../DocumentsPage/modal.js";
-import {createAccessModal} from "./accessModal.js";
-
+import {createAccessSettingsModal} from "./accessSettingsModal.js";
 
 const sendBtn = document.getElementById("sendBtn");
 const copyBtn = document.getElementById("copyBtn");
@@ -12,9 +11,10 @@ const saveDocumentBtn = document.getElementById("saveDocumentBtn");
 const renameDocumentBtn = document.getElementById("renameDocumentBtn");
 const deleteDocumentBtn = document.getElementById("deleteDocumentBtn");
 const accessBtn = document.getElementById("accessBtn");
+const accessSettingsBtn = document.getElementById("accessSettingsBtn");
 
 
-let documentId;
+export let documentId;
 document.addEventListener('DOMContentLoaded', async () => {
     const currentUrl = window.location.pathname;
     const segments = currentUrl.split('/');
@@ -52,12 +52,10 @@ deleteDocumentBtn.addEventListener('click', async (event) => {
     await deleteDocument(documentId);
 });
 
-accessBtn.addEventListener('click', async (event) => {
-    createAccessModal('Дать доступ', async (inputData) => {
-        await giveAccess(inputData, documentId);
-    });
+accessSettingsBtn.addEventListener('click', async (event) => {
+    const accessList = await getAccessList(documentId);
+    await createAccessSettingsModal(accessList, clearPermission);
 });
-
 copyBtn.addEventListener("click", async () => {
     const htmlContent = document.getElementById("markdown-result").innerHTML;
 
@@ -305,7 +303,7 @@ async function renameProject(newName, documentId) {
     }
 }
 
-async function giveAccess(inputData, documentId){
+export async function giveAccess(inputData, documentId){
     let token = tokenStorage.get();
 
     try {
@@ -316,7 +314,7 @@ async function giveAccess(inputData, documentId){
                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
-                permission: inputData.role,
+                permissionType: inputData.role,
                 email: inputData.email
             })
         });
@@ -334,6 +332,68 @@ async function giveAccess(inputData, documentId){
         }
     } catch (error) {
         alert(error);
+    }
+}
+
+async function getAccessList(documentId){
+    let token = tokenStorage.get();
+
+    try {
+        const response = await fetch(`/api/documentAccess/${documentId}/get-permission`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return data.permissons;
+        } else if (response.status === 401) {
+            const loginSuccessful = await showForm(createLoginForm, '/auth/signin', 'Sign In');
+
+            if (loginSuccessful) {
+                return await getAccessList(documentId);
+            }
+        } else {
+            const data = await response.json();
+            alert(data.error);
+        }
+    } catch (error) {
+        alert(error);
+    }
+}
+
+async function clearPermission(documentId, email) {
+    let token = tokenStorage.get();
+
+    try {
+        const response = await fetch(`/api/documentAccess/${documentId}/clear-permission`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(email)
+        });
+
+        if (response.ok) {
+            return true;
+        } else if (response.status === 401) {
+            const loginSuccessful = await showForm(createLoginForm, '/auth/signin', 'Sign In');
+
+            if (loginSuccessful) {
+                return await clearPermission(documentId, email);
+            }
+        } else {
+            const data = await response.json();
+            alert(data.error);
+            return false;
+        }
+    } catch (error) {
+        alert(error);
+        return false;
     }
 }
 

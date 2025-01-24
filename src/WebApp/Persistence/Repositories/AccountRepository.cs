@@ -47,6 +47,26 @@ public class AccountRepository(WebDbContext dbContext): IAccountRepository
             
         return Result<Account>.Success(account)!;
     }
+
+    public async Task<Result<Account>> GetByAccountIdAsync(Guid accountId)
+    {
+        var accountEntity = await dbContext.Accounts
+            .FirstOrDefaultAsync(a => a.AccountId == accountId);
+        
+        if (accountEntity == null)
+            return Result<Account?>.Failure("Account with this email dont exist!")!;
+
+        var account = new Account
+        {
+            AccountId = accountEntity.AccountId,
+            Email = accountEntity.Email,
+            FirstName = accountEntity.FirstName,
+            PasswordHash = accountEntity.PasswordHash,
+        };
+            
+        return Result<Account>.Success(account)!;
+        
+    }
     
     public async Task<bool> IsUserExistsById(Guid accountId)
     {

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Core.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Persistence.Entities;
 
@@ -19,8 +20,13 @@ public class PermissionConfiguration: IEntityTypeConfiguration<PermissionEntity>
             .HasForeignKey(ds => ds.PermissionId);
         
         builder.HasData(
-            new PermissionEntity { PermissionId = 1, Name = "Reader" },
-            new PermissionEntity { PermissionId = 2, Name = "Editor" }
+            Enum.GetValues(typeof(PermissionType))
+                .Cast<PermissionType>()
+                .Select(p => new PermissionEntity
+                {
+                    PermissionId = (int)p,
+                    Name = p.ToString()
+                })
         );
     }
 }
