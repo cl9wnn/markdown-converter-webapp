@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await updateProjectPage(project);
     
     await getMarkdown(documentId);
-    await convertToHtml();
+    await convertToHtml(documentId);
 
 });
 
@@ -33,7 +33,7 @@ documentsBtn.addEventListener('click', () => {
 });
 
 sendBtn.addEventListener("click",  async () => {
-    await convertToHtml();
+    await convertToHtml(documentId);
 });
 
 saveDocumentBtn.addEventListener('click', async (event) => {
@@ -114,12 +114,12 @@ saveHtmlBtn.addEventListener("click", () => {
     }
 });
 
-async function convertToHtml() {
+async function convertToHtml(documentId) {
     let token = tokenStorage.get();
     const rawMd = document.getElementById("markdown-input").value;
     
     try {
-        const response = await fetch(`/api/markdown/convert`, {
+        const response = await fetch(`/api/markdown/convert/${documentId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -137,7 +137,8 @@ async function convertToHtml() {
 
             if (loginSuccessful) {
             }
-        } else {
+        }
+        else {
             const data = await response.json();
             alert(data.error);
         }
@@ -150,9 +151,7 @@ async function getMarkdown(documentId) {
     let token = tokenStorage.get();
 
     try {
-        const query = new URLSearchParams({ documentId }).toString();
-
-        const response = await fetch(`/api/markdown/get?${query}`, {
+        const response = await fetch(`/api/markdown/get/${documentId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -199,7 +198,11 @@ async function saveMarkdown(documentId) {
 
             if (loginSuccessful) {
             }
-        } else {
+        }
+        else if (response.status === 403) {
+            alert('У вас недостаточно прав!');
+        }
+        else {
             const data = await response.json();
             alert(data.error);
         }
@@ -262,7 +265,11 @@ async function deleteDocument(documentId) {
             if (loginSuccessful) {
                 await deleteDocument(documentId);
             }
-        } else {
+        }
+        else if (response.status === 403) {
+            alert('У вас недостаточно прав!');
+        }
+        else {
             const data = await response.json();
             alert(data.error);
         }
@@ -297,7 +304,11 @@ async function renameProject(newName, documentId) {
             if (loginSuccessful) {
                 await renameProject(newName, documentId);
             }
-        } else {
+        }
+        else if (response.status === 403) {
+            alert('У вас недостаточно прав!');
+        }
+        else {
             const data = await response.json();
             alert(data.error);
         }
@@ -329,7 +340,11 @@ export async function giveAccess(inputData, documentId){
             if (loginSuccessful) {
                 await giveAccess(inputData, documentId);
             }
-        } else {
+        }
+        else if (response.status === 403) {
+            alert('У вас недостаточно прав!');
+        }
+        else {
             const data = await response.json();
             alert(data.error);
         }
@@ -359,7 +374,11 @@ async function getAccessList(documentId){
             if (loginSuccessful) {
                 return await getAccessList(documentId);
             }
-        } else {
+        }
+        else if (response.status === 403) {
+            alert('У вас недостаточно прав!');
+        }
+        else {
             const data = await response.json();
             alert(data.error);
         }
@@ -389,7 +408,11 @@ async function clearPermission(documentId, email) {
             if (loginSuccessful) {
                 return await clearPermission(documentId, email);
             }
-        } else {
+        }
+        else if (response.status === 403) {
+            alert('У вас недостаточно прав!');
+        }
+        else {
             const data = await response.json();
             alert(data.error);
             return false;

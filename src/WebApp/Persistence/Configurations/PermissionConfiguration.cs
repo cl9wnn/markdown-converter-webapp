@@ -1,4 +1,5 @@
 ﻿using Core.Models;
+using Core.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Persistence.Entities;

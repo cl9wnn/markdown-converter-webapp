@@ -1,4 +1,5 @@
 ﻿using Core.Models;
+using Core.Utils;
 
 namespace API.Contracts;
 

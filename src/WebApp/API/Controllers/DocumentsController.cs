@@ -2,6 +2,8 @@
 using API.Extensions;
 using API.Filters;
 using Application.Services;
+using Core.Models;
+using Core.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
@@ -39,9 +41,9 @@ public class DocumentsController(DocumentsService documentsService): ControllerB
     }
     
     [ServiceFilter(typeof(UserExistsFilter))]
-    [ServiceFilter(typeof(DocumentExistsFilter))]
-    [ServiceFilter(typeof(ValidateAuthorFilter))]
-    [HttpGet("{documentId:guid}")]
+    [ServiceFilter(typeof(DocumentExistsFilter))] 
+    [TypeFilter(typeof(ValidatePermissionFilter), Arguments = new object[] { RequiredAccessLevel.Reader })]
+   [HttpGet("{documentId:guid}")]
     public async Task<IActionResult> GetDocumentAsync(Guid documentId)
     {
         var getDocumentResult = await documentsService.GetDocumentAsync(documentId);
@@ -53,7 +55,7 @@ public class DocumentsController(DocumentsService documentsService): ControllerB
     
     [ServiceFilter(typeof(UserExistsFilter))]
     [ServiceFilter(typeof(DocumentExistsFilter))]
-    [ServiceFilter(typeof(ValidateAuthorFilter))]
+    [TypeFilter(typeof(ValidatePermissionFilter), Arguments = new object[] { RequiredAccessLevel.Editor })]
     [HttpPost("{documentId:guid}/rename")]
     public async Task<IActionResult> RenameDocumentAsync(Guid documentId, [FromBody] string newName)
     {
@@ -66,7 +68,7 @@ public class DocumentsController(DocumentsService documentsService): ControllerB
     
     [ServiceFilter(typeof(UserExistsFilter))]
     [ServiceFilter(typeof(DocumentExistsFilter))]
-    [ServiceFilter(typeof(ValidateAuthorFilter))]
+    [TypeFilter(typeof(ValidatePermissionFilter), Arguments = new object[] { RequiredAccessLevel.Author })]
     [HttpDelete("{documentId:guid}/delete")]
     public async Task<IActionResult> DeleteDocumentAsync(Guid documentId)
     {

@@ -2,6 +2,7 @@
 using API.Filters;
 using Application.Services;
 using Core.Models;
+using Core.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +16,7 @@ public class DocumentAccessController(DocumentAccessService documentAccessServic
     
     [ServiceFilter(typeof(UserExistsFilter))]
     [ServiceFilter(typeof(DocumentExistsFilter))]
-    [ServiceFilter(typeof(ValidateAuthorFilter))]
+    [TypeFilter(typeof(ValidatePermissionFilter), Arguments = new object[] { RequiredAccessLevel.Author })]
     [HttpPost("{documentId:guid}/set-permission")]
     public async Task<IActionResult> SetPermissionAsync(Guid documentId, [FromBody] SetPermissionRequest request)
     {
@@ -39,7 +40,7 @@ public class DocumentAccessController(DocumentAccessService documentAccessServic
 
     [ServiceFilter(typeof(UserExistsFilter))]
     [ServiceFilter(typeof(DocumentExistsFilter))]
-    [ServiceFilter(typeof(ValidateAuthorFilter))]
+    [TypeFilter(typeof(ValidatePermissionFilter), Arguments = new object[] { RequiredAccessLevel.Author })]
     [HttpGet("{documentId:guid}/get-permission")]
     public async Task<IActionResult> GetDocumentPermissionListAsync(Guid documentId)
     {
@@ -52,7 +53,7 @@ public class DocumentAccessController(DocumentAccessService documentAccessServic
     
     [ServiceFilter(typeof(UserExistsFilter))]
     [ServiceFilter(typeof(DocumentExistsFilter))]
-    [ServiceFilter(typeof(ValidateAuthorFilter))]
+    [TypeFilter(typeof(ValidatePermissionFilter), Arguments = new object[] { RequiredAccessLevel.Author })]
     [HttpPost("{documentId:guid}/clear-permission")]
     public async Task<IActionResult> ClearDocumentPermissionAsync(Guid documentId, [FromBody] string email)
     {

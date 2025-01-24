@@ -20,8 +20,8 @@ public class DocumentAccessRepository(WebDbContext dbContext): IDocumentAccessRe
 
     public async Task<Result> AddDocumentShareAsync(int permissionId, Guid documentId, Guid accountId)
     {
-        var accountEntity = dbContext.Accounts
-            .FirstOrDefault(a => a.AccountId == accountId);
+        var accountEntity = await dbContext.Accounts
+            .FirstOrDefaultAsync(a => a.AccountId == accountId);
 
         if (accountEntity == null)
             return Result.Failure("Account not found");
@@ -61,8 +61,8 @@ public class DocumentAccessRepository(WebDbContext dbContext): IDocumentAccessRe
     
     public async Task<Result> ClearPermissionsAsync(Guid documentId, Guid accountId)
     {
-        var accountEntity = dbContext.Accounts
-            .FirstOrDefault(a => a.AccountId == accountId);
+        var accountEntity = await dbContext.Accounts
+            .FirstOrDefaultAsync(a => a.AccountId == accountId);
 
         if (accountEntity == null)
             return Result.Failure("Account not found");
@@ -100,5 +100,15 @@ public class DocumentAccessRepository(WebDbContext dbContext): IDocumentAccessRe
         }).ToList();
         
         return Result<ICollection<Permission>>.Success(documentPermissionsList);
+    }
+
+    public async Task<int> GetUserPermissionAsync(Guid documentId, Guid accountId)
+    {
+        var documentShareEntity = await dbContext.DocumentShares
+            .FirstOrDefaultAsync(ds => ds.DocumentId == documentId && ds.AccountId == accountId);
+
+        return documentShareEntity == null
+            ? 0
+            : documentShareEntity.PermissionId;
     }
 }

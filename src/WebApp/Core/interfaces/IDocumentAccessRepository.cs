@@ -9,4 +9,6 @@ public interface IDocumentAccessRepository
     Task<Result> AddDocumentShareAsync(int permissionId, Guid documentId, Guid accountId);
     Task<Result> ClearPermissionsAsync(Guid documentId, Guid accountId);
     Task<Result<ICollection<Permission>>> GetAllDocumentPermissionsAsync(Guid documentId);
+    Task<int> GetUserPermissionAsync(Guid documentId, Guid accountId);
+
 }

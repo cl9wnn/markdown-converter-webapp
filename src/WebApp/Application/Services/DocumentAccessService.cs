@@ -63,4 +63,9 @@ public class DocumentAccessService(IDocumentAccessRepository documentAccessRepos
         
         return Result<ICollection<DocumentPermissionDto>>.Success(permissions);
     }
+
+    public async Task<int> GetUserPermissionAsync(Guid documentId, Guid accountId)
+    {
+        return await documentAccessRepository.GetUserPermissionAsync(documentId, accountId);
+    }
 }

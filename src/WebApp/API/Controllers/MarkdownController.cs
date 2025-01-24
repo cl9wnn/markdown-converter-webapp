@@ -3,6 +3,7 @@ using API.Contracts;
 using API.Extensions;
 using API.Filters;
 using Application.Services;
+using Core.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,8 +16,10 @@ namespace API.Controllers;
 public class MarkdownController(MdService mdService): ControllerBase
 {
     [ServiceFilter(typeof(UserExistsFilter))]
-    [HttpPost("convert")]
-    public async Task<IActionResult> GetHtml([FromBody] MarkdownRequest request)
+    [ServiceFilter(typeof(DocumentExistsFilter))]
+    [TypeFilter(typeof(ValidatePermissionFilter), Arguments = new object[] { RequiredAccessLevel.Reader })]
+    [HttpPost("convert/{documentId:guid}")]
+    public async Task<IActionResult> GetHtml(Guid documentId, [FromBody] MarkdownRequest request)
     {
         var htmlResult = await mdService.ConvertToHtmlAsync(request.RawMd!);
         
@@ -27,7 +30,7 @@ public class MarkdownController(MdService mdService): ControllerBase
     
     [ServiceFilter(typeof(UserExistsFilter))]
     [ServiceFilter(typeof(DocumentExistsFilter))]
-    [ServiceFilter(typeof(ValidateAuthorFilter))]
+    [TypeFilter(typeof(ValidatePermissionFilter), Arguments = new object[] { RequiredAccessLevel.Editor })]
     [HttpPost("save/{documentId:guid}")]
     public async Task<IActionResult> SaveDocumentAsync(Guid documentId, [FromBody] string mdContent)
     {
@@ -40,12 +43,11 @@ public class MarkdownController(MdService mdService): ControllerBase
     
     [ServiceFilter(typeof(UserExistsFilter))]
     [ServiceFilter(typeof(DocumentExistsFilter))]
-    [ServiceFilter(typeof(ValidateAuthorFilter))]
-    [HttpGet("get")]
-    public async Task<IActionResult> GetMarkdownFile([FromQuery] string documentId)
+    [TypeFilter(typeof(ValidatePermissionFilter), Arguments = new object[] { RequiredAccessLevel.Reader })]
+    [HttpGet("get/{documentId:guid}")]
+    public async Task<IActionResult> GetMarkdownFile(Guid documentId)
     {
-        var parsedDocumentId = Guid.Parse(documentId);
-        var getResult = await mdService.GetMarkdownAsync(parsedDocumentId);
+        var getResult = await mdService.GetMarkdownAsync(documentId);
 
         return getResult.IsSuccess
             ? Ok(new { Content = getResult.Data })
