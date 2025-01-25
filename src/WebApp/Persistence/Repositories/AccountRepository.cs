@@ -1,4 +1,4 @@
-using Core.interfaces;
+using Core.Interfaces.Repositories;
 using Core.Utils;
 using Core.Models;
 using Microsoft.EntityFrameworkCore;

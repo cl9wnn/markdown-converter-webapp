@@ -1,11 +1,11 @@
-﻿using Application.Models;
-using Core.interfaces;
+﻿using Application.Interfaces.Services;
+using Application.Models;
+using Core.Interfaces.Repositories;
 using Core.Models;
 using Core.Utils;
-
 namespace Application.Services;
 
-public class DocumentsService(IDocumentsRepository documentRepository, MinioService minIoService)
+public class DocumentsService(IDocumentsRepository documentRepository, MinioService minIoService): IDocumentsService
 {
 
     public async Task<Result> CreateProjectAsync(Guid? accountId, string name)

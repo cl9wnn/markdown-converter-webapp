@@ -1,17 +1,16 @@
-﻿using API.Contracts;
+﻿using API.Attributes;
 using API.Extensions;
 using API.Filters;
-using Application.Services;
-using Core.Models;
 using Core.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Application.Interfaces.Services;
 namespace API.Controllers;
 
 [ApiController]
 [Authorize]
 [Route("api/[controller]")]
-public class DocumentsController(DocumentsService documentsService): ControllerBase
+public class DocumentsController(IDocumentsService documentsService): ControllerBase
 {
     
     [ServiceFilter(typeof(UserExistsFilter))]
@@ -42,7 +41,7 @@ public class DocumentsController(DocumentsService documentsService): ControllerB
     
     [ServiceFilter(typeof(UserExistsFilter))]
     [ServiceFilter(typeof(DocumentExistsFilter))] 
-    [TypeFilter(typeof(ValidatePermissionFilter), Arguments = new object[] { RequiredAccessLevel.Reader })]
+    [ValidatePermission(RequiredAccessLevel.Reader)]
    [HttpGet("{documentId:guid}")]
     public async Task<IActionResult> GetDocumentAsync(Guid documentId)
     {
@@ -55,7 +54,7 @@ public class DocumentsController(DocumentsService documentsService): ControllerB
     
     [ServiceFilter(typeof(UserExistsFilter))]
     [ServiceFilter(typeof(DocumentExistsFilter))]
-    [TypeFilter(typeof(ValidatePermissionFilter), Arguments = new object[] { RequiredAccessLevel.Editor })]
+    [ValidatePermission(RequiredAccessLevel.Editor)]
     [HttpPost("{documentId:guid}/rename")]
     public async Task<IActionResult> RenameDocumentAsync(Guid documentId, [FromBody] string newName)
     {
@@ -68,7 +67,7 @@ public class DocumentsController(DocumentsService documentsService): ControllerB
     
     [ServiceFilter(typeof(UserExistsFilter))]
     [ServiceFilter(typeof(DocumentExistsFilter))]
-    [TypeFilter(typeof(ValidatePermissionFilter), Arguments = new object[] { RequiredAccessLevel.Author })]
+    [ValidatePermission(RequiredAccessLevel.Author)]
     [HttpDelete("{documentId:guid}/delete")]
     public async Task<IActionResult> DeleteDocumentAsync(Guid documentId)
     {

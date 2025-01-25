@@ -1,7 +1,8 @@
-﻿using API.Contracts;
+﻿using API.Attributes;
+using API.Contracts;
 using API.Filters;
+using Application.Interfaces.Services;
 using Application.Services;
-using Core.Models;
 using Core.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,19 +12,19 @@ namespace API.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/[controller]")]
-public class DocumentAccessController(DocumentAccessService documentAccessService, AccountService accountService): ControllerBase
+public class DocumentAccessController(IDocumentAccessService documentAccessService, IAccountService accountService): ControllerBase
 {
     
     [ServiceFilter(typeof(UserExistsFilter))]
     [ServiceFilter(typeof(DocumentExistsFilter))]
-    [TypeFilter(typeof(ValidatePermissionFilter), Arguments = new object[] { RequiredAccessLevel.Author })]
+    [ValidatePermission(RequiredAccessLevel.Author)]
     [HttpPost("{documentId:guid}/set-permission")]
     public async Task<IActionResult> SetPermissionAsync(Guid documentId, [FromBody] SetPermissionRequest request)
     {
         if (!Enum.IsDefined(typeof(PermissionType), request.PermissionType) || request.Email == null)
             return BadRequest(new { Error = "Invalid permissionType or email" });
                 
-        var accountResult = await accountService.GetAccountIdByEmail(request.Email!);
+        var accountResult = await accountService.GetAccountIdByEmailAsync(request.Email!);
 
         if (!accountResult.IsSuccess)
         {
@@ -40,7 +41,7 @@ public class DocumentAccessController(DocumentAccessService documentAccessServic
 
     [ServiceFilter(typeof(UserExistsFilter))]
     [ServiceFilter(typeof(DocumentExistsFilter))]
-    [TypeFilter(typeof(ValidatePermissionFilter), Arguments = new object[] { RequiredAccessLevel.Author })]
+    [ValidatePermission(RequiredAccessLevel.Author)]
     [HttpGet("{documentId:guid}/get-permission")]
     public async Task<IActionResult> GetDocumentPermissionListAsync(Guid documentId)
     {
@@ -53,7 +54,7 @@ public class DocumentAccessController(DocumentAccessService documentAccessServic
     
     [ServiceFilter(typeof(UserExistsFilter))]
     [ServiceFilter(typeof(DocumentExistsFilter))]
-    [TypeFilter(typeof(ValidatePermissionFilter), Arguments = new object[] { RequiredAccessLevel.Author })]
+    [ValidatePermission(RequiredAccessLevel.Author)]
     [HttpPost("{documentId:guid}/clear-permission")]
     public async Task<IActionResult> ClearDocumentPermissionAsync(Guid documentId, [FromBody] string email)
     {

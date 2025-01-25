@@ -1,8 +1,6 @@
-using System.Web;
 using API.Contracts;
-using API.Extensions;
 using API.Filters;
-using Application.Services;
+using Application.Interfaces.Services;
 using Core.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +11,7 @@ namespace API.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/[controller]")]
-public class MarkdownController(MdService mdService): ControllerBase
+public class MarkdownController(IMdService mdService): ControllerBase
 {
     [ServiceFilter(typeof(UserExistsFilter))]
     [ServiceFilter(typeof(DocumentExistsFilter))]

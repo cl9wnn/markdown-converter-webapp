@@ -1,13 +1,13 @@
 ﻿using API.Contracts;
 using API.Validators;
-using Application.Services;
+using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class AuthController(AccountService accountService): ControllerBase
+public class AuthController(IAccountService accountService): ControllerBase
 {
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterUserRequest? request)

@@ -1,9 +1,10 @@
-﻿using Core.Utils;
+﻿using Application.Interfaces.Services;
+using Core.Utils;
 using Markdown.Interfaces;
 
 namespace Application.Services;
 using Markdown;
-public class MdService(IMarkdownProcessor markdownProcessor, MinioService minIoService)
+public class MdService(IMarkdownProcessor markdownProcessor, MinioService minIoService): IMdService
 {
     public async Task<Result<string>> ConvertToHtmlAsync(string rawMarkdown)
     {
@@ -48,6 +49,5 @@ public class MdService(IMarkdownProcessor markdownProcessor, MinioService minIoS
         {
             return Result<string>.Failure(ex.Message)!;
         }
-
     }
 }

@@ -22,5 +22,9 @@
             <HintPath>..\..\MarkdownProcessor\MarkdownProcessor\bin\Debug\net8.0\Markdown.dll</HintPath>
         </Reference>
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Interfaces\" />
+    </ItemGroup>
     
 </Project>

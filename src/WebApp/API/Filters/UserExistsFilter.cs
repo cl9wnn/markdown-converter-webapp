@@ -1,10 +1,10 @@
-﻿using Application.Services;
+﻿using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace API.Filters;
 
-public class UserExistsFilter(AccountService accountService): IAsyncActionFilter
+public class UserExistsFilter(IAccountService accountService): IAsyncActionFilter
 {
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {

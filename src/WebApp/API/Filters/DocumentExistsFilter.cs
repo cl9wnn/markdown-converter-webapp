@@ -1,11 +1,10 @@
 ﻿using System.Text.Json;
-using Application.Services;
+using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-
 namespace API.Filters;
 
-public class DocumentExistsFilter(DocumentsService documentsService) : IAsyncActionFilter
+public class DocumentExistsFilter(IDocumentsService documentsService) : IAsyncActionFilter
 {
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {

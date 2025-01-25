@@ -1,11 +1,10 @@
-﻿using Application.Models;
-using Core.interfaces;
-using Core.Models;
+﻿using Application.Interfaces.Services;
+using Application.Models;
+using Core.Interfaces.Repositories;
 using Core.Utils;
-
 namespace Application.Services;
 
-public class DocumentAccessService(IDocumentAccessRepository documentAccessRepository, IAccountRepository accountRepository)
+public class DocumentAccessService(IDocumentAccessRepository documentAccessRepository, IAccountRepository accountRepository): IDocumentAccessService
 {
     public async Task<bool> IsAuthorAsync(Guid documentId, Guid accountId)
     {

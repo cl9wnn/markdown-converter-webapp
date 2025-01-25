@@ -1,11 +1,12 @@
-using Core.interfaces;
+using Application.Interfaces.Services;
+using Core.Interfaces.Repositories;
 using Core.Models;
 using Core.Utils;
 using Microsoft.AspNetCore.Identity;
 
 namespace Application.Services;
 
-public class AccountService(IAccountRepository accountRepository, JwtService jwtService)
+public class AccountService(IAccountRepository accountRepository, JwtService jwtService): IAccountService
 {
     public async Task<Result<string>> RegisterAsync(string email, string password, string firstName)
     {
@@ -30,7 +31,7 @@ public class AccountService(IAccountRepository accountRepository, JwtService jwt
         return Result<string>.Failure(addResult.ErrorMessage!)!;
     }
 
-    public async Task<Result<string>?> LoginAsync(string email, string password)
+    public async Task<Result<string>> LoginAsync(string email, string password)
     {
         var accountResult = await accountRepository.GetByEmailAsync(email);
         
@@ -50,7 +51,7 @@ public class AccountService(IAccountRepository accountRepository, JwtService jwt
         return Result<string>.Failure("Invalid password!"!)!;
     }
 
-    public async Task<Result<Guid>> GetAccountIdByEmail(string email)
+    public async Task<Result<Guid>> GetAccountIdByEmailAsync(string email)
     {
         var accountResult = await accountRepository.GetByEmailAsync(email);
         
