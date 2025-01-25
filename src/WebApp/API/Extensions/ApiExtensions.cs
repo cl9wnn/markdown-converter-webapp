@@ -54,8 +54,6 @@ public static class ApiExtensions
     {
         services.AddScoped<UserExistsFilter>();
         services.AddScoped<DocumentExistsFilter>();
-        services.AddScoped<ValidateAuthorFilter>();
-
         return services;
     }
     

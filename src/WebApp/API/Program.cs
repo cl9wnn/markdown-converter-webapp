@@ -5,6 +5,7 @@ using Persistence;
 using Persistence.Repositories;
 using API.Extensions;
 using API.Middlewares;
+using Core.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();

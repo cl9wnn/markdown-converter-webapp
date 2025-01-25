@@ -107,8 +107,6 @@ public class DocumentAccessRepository(WebDbContext dbContext): IDocumentAccessRe
         var documentShareEntity = await dbContext.DocumentShares
             .FirstOrDefaultAsync(ds => ds.DocumentId == documentId && ds.AccountId == accountId);
 
-        return documentShareEntity == null
-            ? 0
-            : documentShareEntity.PermissionId;
+        return documentShareEntity?.PermissionId ?? 0;
     }
 }

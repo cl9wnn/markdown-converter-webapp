@@ -61,6 +61,6 @@ public class AccountService(IAccountRepository accountRepository, JwtService jwt
 
     public async Task<bool> DoesUserExistAsync(Guid accountId)
     { 
-        return await accountRepository.IsUserExistsById(accountId);
+        return await accountRepository.IsUserExistsByIdAsync(accountId);
     }
 }

@@ -9,7 +9,7 @@ public interface IDocumentsRepository
     Task<Result<Document>> GetDocumentAsync(Guid documentId);
     Task<Result<ICollection<Document>>> GetDocumentsAsync(Guid? accountId);
     Task<Result<string>> DeleteDocumentAsync(Guid documentId);
-    Task<bool> IsDocumentExistsById(Guid documentId);
+    Task<bool> IsDocumentExistsByIdAsync(Guid documentId);
     Task<Result<string>> GetAuthorNameAsync(Guid documentId);
 
 }

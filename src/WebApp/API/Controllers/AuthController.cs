@@ -1,4 +1,5 @@
-﻿using API.Models;
+﻿using API.Contracts;
+using API.Validators;
 using Application.Services;
 using Microsoft.AspNetCore.Mvc;
 

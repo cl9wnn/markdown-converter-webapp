@@ -95,7 +95,7 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
     
     public async Task<bool> DoesDocumentExistAsync(Guid documentId)
     {
-        return await documentRepository.IsDocumentExistsById(documentId);
+        return await documentRepository.IsDocumentExistsByIdAsync(documentId);
     }
     
 }

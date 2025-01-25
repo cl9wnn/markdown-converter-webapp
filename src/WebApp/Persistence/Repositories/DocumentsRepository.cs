@@ -91,7 +91,7 @@ public class DocumentsRepository(WebDbContext dbContext): IDocumentsRepository
         return Result<string>.Success(newName);
     }
     
-    public async Task<bool> IsDocumentExistsById(Guid documentId)
+    public async Task<bool> IsDocumentExistsByIdAsync(Guid documentId)
     {
        return await dbContext.Documents.AnyAsync(a => a.DocumentId == documentId);
     }
