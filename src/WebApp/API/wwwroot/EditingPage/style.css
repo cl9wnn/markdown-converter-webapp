@@ -154,13 +154,38 @@ button:active {
     margin-bottom: 10px;
 }
 
-#send-bttn{
-    width: 100px;
+.icon-btn{
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 70% 70%;
+    width: 40px;
     height: 40px;
+    border: none;
+    cursor: pointer;
+}
+
+#accessSettingsBtn{
+    height: 40px;
+}
+#deleteDocumentBtn {
+    background-image: url('/Resources/bin.png');
+}
+
+#documentsBtn {
+    background-image: url('/Resources/documents.png');
+}
+
+#renameDocumentBtn{
+    background-image: url('/Resources/rename.png');
 }
 
 #saveDocumentBtn{
-    width: 70px;
+    background-image: url('/Resources/save.png');
+}
+
+
+#send-bttn{
+    width: 100px;
     height: 40px;
 }
 
@@ -285,6 +310,9 @@ button:active {
     color: #dc3545;
 }
 
+.close-button:hover {
+    background-color: transparent;
+}
 /*------------------  PERMISSION MODAL WINDOW   ------------------*/
 
 .per-modal {
@@ -321,14 +349,14 @@ button:active {
 
 .per-modal-header h2 {
     margin: 0;
-    font-size: 18px;
+    font-size: 20px;
     color: #333;
 }
 
 .per-close-modal {
     background: none;
     border: none;
-    font-size: 18px;
+    font-size: 24px;
     cursor: pointer;
     color: #999;
     transition: color 0.3s;
@@ -336,7 +364,7 @@ button:active {
 
 .per-close-modal:hover {
     background-color: transparent;
-    color: #333;
+    color: #ea0000;
 }
 
 .per-modal-body {
@@ -344,6 +372,37 @@ button:active {
     font-family: 'Arial', sans-serif;
     font-size: 14px;
     color: #555;
+}
+
+.per-title-button-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap:6px;
+}
+
+.per-user-info {
+    display: flex;
+    flex-direction: row; 
+    gap: 16px; 
+    align-items: center;
+    justify-content: center;
+}
+
+.per-email {
+    font-size: 14px;
+    color: #555; 
+}
+
+.per-role {
+    font-size: 12px;
+    font-weight: bold;
+    color: #ffffff; 
+    background-color: #ffffff;
+    padding: 4px 8px;
+    border-radius: 8px;
+    display: inline-block; 
 }
 
 .per-list-item {
@@ -354,49 +413,72 @@ button:active {
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 6px;
-    background-color: #f9f9f9;
+    background-color: #e6e6e6;
     transition: background-color 0.3s;
 }
 
-.per-list-item:hover {
-    background-color: #f1f1f1;
-}
 
 .per-list-item span {
-    font-size: 14px;
+    font-size: 18px;
     color: #333;
 }
+
+
+.per-button-container {
+    display: flex;
+    gap: 0;
+}
+
+.per-add-button{
+    background-color: #b1b1b1;
+    border: 1px solid #ddd;
+    width: 30px;
+    height: 30px;
+    border-radius: 25%;
+    font-size: 20px;
+    color: #ffffff;
+    padding: 0;
+}
+
+.per-add-button:hover {
+    background-color: #b3b3b3;
+}
+
 
 .per-delete-button {
     background-color: #ff4d4f;
     border: none;
     border-radius: 4px;
     padding: 4px 8px;
+    width: 30px;
+    height: 30px;
     color: white;
-    font-size: 12px;
+    font-size: 15px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
 .per-change-button {
+    background-image: url('/Resources/change_role.png');
     background-color: #3480bf;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 60% 60%;
+    width: 30px;
+    height: 30px;
     border: none;
+    cursor: pointer;
     border-radius: 4px;
     padding: 4px 8px;
     color: white;
     font-size: 12px;
-    cursor: pointer;
     transition: background-color 0.3s;
 }
-
 
 .per-delete-button:hover {
     background-color: #d9363e;
 }
 
-.per-no-permissions {
-    text-align: center;
-    color: #999;
-    font-style: italic;
-    margin: 10px 0;
+.per-change-button:hover {
+    background-color: #2a6fa5;
 }

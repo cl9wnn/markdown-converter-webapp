@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/EditingPage/style.css">
     <link rel="stylesheet" href="/Authorization/style.css">
+    <link rel="stylesheet" href="/CustomAlert/style.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <title>Editor</title>
 </head>
@@ -12,10 +13,10 @@
     <div class="description-container">
         <div class="redactor-buttons">
             <button id="accessSettingsBtn">Access settings</button>
-            <button id="saveDocumentBtn">Save</button>
-            <button id="renameDocumentBtn">Rename</button>
-            <button id="deleteDocumentBtn">Delete</button>
-            <button id="documentsBtn">My documents</button>
+            <button class="icon-btn" id="saveDocumentBtn"></button>
+            <button class="icon-btn" id="renameDocumentBtn"></button>
+            <button class="icon-btn" id="deleteDocumentBtn"></button>
+            <button class="icon-btn" id="documentsBtn"></button>
         </div>
         <h1 id="projectName"></h1>
         <p id="authorText"></p>
@@ -30,12 +31,13 @@
             </form>
         </div>
         <div class="html-buttons">
-            <button id="copyBtn" type="submit"> Copy</button>
-            <button id="saveBtn" type="submit"> Download</button>
+            <button  id="copyBtn" type="submit">copy</button>
+            <button  id="saveBtn" type="submit">download</button>
         </div>
         <button id="sendBtn" type="submit"> convert</button>
     </div>
 </div>
 <script type="module" src="/EditingPage/script.js"></script>
+<script src="/CustomAlert/script.js"></script>
 </body>
 </html>

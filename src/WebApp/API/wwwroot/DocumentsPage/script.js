@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
 document.getElementById("createBtn").addEventListener("click",  async () => {
-        await createModal('Создать документ', async (title) => {
+        await createModal('Create document', async (title) => {
             await createDocument(title);
         });
 });
@@ -56,7 +56,7 @@ export function loadProjectTable(projectArray) {
         const renameButton = document.createElement('button');
         renameButton.textContent = 'Rename';
         renameButton.addEventListener('click', () => {
-            createModal('Изменить название', async (newTitle) => {
+            createModal('Change name', async (newTitle) => {
                 await renameProject(newTitle, project.documentId);
             });
         });

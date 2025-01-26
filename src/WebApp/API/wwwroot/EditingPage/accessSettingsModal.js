@@ -13,6 +13,9 @@ export function createAccessSettingsModal(permissionArray, clearPermission) {
     const modalHeader = document.createElement('div');
     modalHeader.className = 'per-modal-header';
 
+    const titleAndButtonContainer = document.createElement('div');
+    titleAndButtonContainer.className = 'per-title-button-container';
+
     const title = document.createElement('h2');
     title.textContent = 'Users, who have access';
 
@@ -36,6 +39,9 @@ export function createAccessSettingsModal(permissionArray, clearPermission) {
         });
     };
 
+    titleAndButtonContainer.appendChild(title);
+    titleAndButtonContainer.appendChild(addButton);
+
     const closeModalButton = document.createElement('button');
     closeModalButton.className = 'per-close-modal';
     closeModalButton.textContent = '×';
@@ -44,8 +50,7 @@ export function createAccessSettingsModal(permissionArray, clearPermission) {
         modal.remove();
     };
 
-    modalHeader.appendChild(title);
-    modalHeader.appendChild(addButton); 
+    modalHeader.appendChild(titleAndButtonContainer);
     modalHeader.appendChild(closeModalButton);
 
     const modalBody = document.createElement('div');
@@ -66,12 +71,25 @@ export function createAccessSettingsModal(permissionArray, clearPermission) {
             const listItem = document.createElement('div');
             listItem.className = 'per-list-item';
 
-            const roleInfo = document.createElement('span');
-            roleInfo.textContent = `${role.email} - ${role.permissionName}`;
+            const userInfoContainer = document.createElement('div');
+            userInfoContainer.className = 'per-user-info';
+
+            const emailElement = document.createElement('span');
+            emailElement.className = 'per-email';
+            emailElement.textContent = role.email;
+
+            const roleElement = document.createElement('span');
+            roleElement.className = 'per-role';
+            roleElement.textContent = role.permissionName;
+
+            userInfoContainer.appendChild(emailElement);
+            userInfoContainer.appendChild(roleElement);
+
+            const buttonContainer = document.createElement('div');
+            buttonContainer.className = 'per-button-container';
 
             const changeButton = document.createElement('button');
             changeButton.className = 'per-change-button';
-            changeButton.textContent = 'change';
             changeButton.onclick = async () => {
                 modal.remove();
                 await createAccessModal('Give access', async (inputData) => {
@@ -92,9 +110,12 @@ export function createAccessSettingsModal(permissionArray, clearPermission) {
                 }
             };
 
-            listItem.appendChild(roleInfo);
-            listItem.appendChild(changeButton);
-            listItem.appendChild(deleteButton);
+            buttonContainer.appendChild(changeButton);
+            buttonContainer.appendChild(deleteButton);
+
+            listItem.appendChild(userInfoContainer);
+            listItem.appendChild(buttonContainer);
+
             modalBody.appendChild(listItem);
         });
     }

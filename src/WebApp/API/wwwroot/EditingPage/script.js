@@ -42,7 +42,7 @@ saveDocumentBtn.addEventListener('click', async (event) => {
 });
 
 renameDocumentBtn.addEventListener('click', () => {
-    createModal('Изменить название', async (newTitle) => {
+    createModal('Change name', async (newTitle) => {
         await renameProject(newTitle, documentId);
     });
 });
@@ -200,7 +200,7 @@ async function saveMarkdown(documentId) {
             }
         }
         else if (response.status === 403) {
-            alert('У вас недостаточно прав!');
+            customAlert('У вас недостаточно прав!');
         }
         else {
             const data = await response.json();
@@ -267,7 +267,7 @@ async function deleteDocument(documentId) {
             }
         }
         else if (response.status === 403) {
-            alert('У вас недостаточно прав!');
+            customAlert('У вас недостаточно прав!');
         }
         else {
             const data = await response.json();
@@ -306,7 +306,7 @@ async function renameProject(newName, documentId) {
             }
         }
         else if (response.status === 403) {
-            alert('У вас недостаточно прав!');
+            customAlert('У вас недостаточно прав!');
         }
         else {
             const data = await response.json();
@@ -342,7 +342,7 @@ export async function giveAccess(inputData, documentId){
             }
         }
         else if (response.status === 403) {
-            alert('У вас недостаточно прав!');
+            customAlert('У вас недостаточно прав!');
         }
         else {
             const data = await response.json();
@@ -376,7 +376,7 @@ async function getAccessList(documentId){
             }
         }
         else if (response.status === 403) {
-            alert('У вас недостаточно прав!');
+            customAlert('У вас недостаточно прав!');
         }
         else {
             const data = await response.json();
@@ -410,7 +410,7 @@ async function clearPermission(documentId, email) {
             }
         }
         else if (response.status === 403) {
-            alert('У вас недостаточно прав!');
+            customAlert('У вас недостаточно прав!');
         }
         else {
             const data = await response.json();
