@@ -3,7 +3,6 @@ using Core.Utils;
 using Markdown.Interfaces;
 
 namespace Application.Services;
-using Markdown;
 public class MdService(IMarkdownProcessor markdownProcessor, MinioService minIoService): IMdService
 {
     public async Task<Result<string>> ConvertToHtmlAsync(string rawMarkdown)

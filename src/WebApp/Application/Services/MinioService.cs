@@ -8,6 +8,8 @@ namespace Application.Services;
 public class MinioService
 {
     private const string DefaultContentType = "text/markdown";
+    private const string BucketName = "md-bucket";
+    private const string Endpoint = "minio:9000";
 
     private readonly MinIoSettings _minIoSettings;
     private readonly IMinioClient _minioClient;
@@ -17,7 +19,7 @@ public class MinioService
         _minIoSettings = options.Value;
 
         _minioClient = new MinioClient()
-            .WithEndpoint(_minIoSettings.Endpoint)
+            .WithEndpoint(Endpoint)
             .WithCredentials(_minIoSettings.AccessKey, _minIoSettings.SecretKey)
             .Build();
     }
@@ -25,12 +27,12 @@ public class MinioService
     private async Task EnsureBucketExistsAsync()
     {
         var found = await _minioClient.BucketExistsAsync(
-            new BucketExistsArgs().WithBucket(_minIoSettings.BucketName)
+            new BucketExistsArgs().WithBucket(BucketName)
         );
         if (!found)
         {
             await _minioClient.MakeBucketAsync(
-                new MakeBucketArgs().WithBucket(_minIoSettings.BucketName)
+                new MakeBucketArgs().WithBucket(BucketName)
             );
         }
     }
@@ -49,13 +51,13 @@ public class MinioService
 
             using var stream = new MemoryStream(fileBytes);
             await _minioClient.PutObjectAsync(new PutObjectArgs()
-                .WithBucket(_minIoSettings.BucketName)
+                .WithBucket(BucketName)
                 .WithObject(objectName)
                 .WithStreamData(stream)
                 .WithObjectSize(fileBytes.Length)
                 .WithContentType(contentType), cancellationToken);
 
-            var objectUrl = $"{_minIoSettings.Endpoint}/{_minIoSettings.BucketName}/{objectName}";
+            var objectUrl = $"{Endpoint}/{BucketName}/{objectName}";
             return objectUrl;
         }
         catch (Exception ex)
@@ -70,7 +72,7 @@ public class MinioService
         try
         {
             await _minioClient.RemoveObjectAsync(new RemoveObjectArgs()
-                .WithBucket(_minIoSettings.BucketName)
+                .WithBucket(BucketName)
                 .WithObject(objectName), cancellationToken);
             return true;
         }
@@ -101,7 +103,7 @@ public class MinioService
         {
             using var memoryStream = new MemoryStream();
             await _minioClient.GetObjectAsync(new GetObjectArgs()
-                .WithBucket(_minIoSettings.BucketName)
+                .WithBucket(BucketName)
                 .WithObject(objectName)
                 .WithCallbackStream(async stream =>
                 {

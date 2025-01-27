@@ -4,6 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -37,9 +38,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="Markdown">
-        <HintPath>..\..\MarkdownProcessor\MarkdownProcessor\bin\Debug\net8.0\Markdown.dll</HintPath>
-      </Reference>
+        <ProjectReference Include="..\..\MarkdownProcessor\MarkdownProcessor\Markdown.csproj" />
     </ItemGroup>
 
     <ItemGroup>

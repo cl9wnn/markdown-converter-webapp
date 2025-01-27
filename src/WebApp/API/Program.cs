@@ -31,7 +31,8 @@ builder.Services.Configure<MinIoSettings>(builder.Configuration.GetSection("MinI
 builder.Services.AddDataBase(builder.Configuration);
 builder.Services.AddAuth(builder.Configuration);
 builder.Services.AddMdProcessor();
-builder.Services.AddFilters();
+builder.Services.AddFilters()
+    ;
 
 var app = builder.Build();
 

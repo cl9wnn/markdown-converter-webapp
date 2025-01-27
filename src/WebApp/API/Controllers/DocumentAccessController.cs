@@ -2,7 +2,6 @@
 using API.Contracts;
 using API.Filters;
 using Application.Interfaces.Services;
-using Application.Services;
 using Core.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

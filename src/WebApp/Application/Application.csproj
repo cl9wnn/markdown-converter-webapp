@@ -18,13 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Reference Include="Markdown">
-            <HintPath>..\..\MarkdownProcessor\MarkdownProcessor\bin\Debug\net8.0\Markdown.dll</HintPath>
-        </Reference>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Interfaces\" />
+        <ProjectReference Include="..\..\MarkdownProcessor\MarkdownProcessor\Markdown.csproj" />
     </ItemGroup>
     
 </Project>
