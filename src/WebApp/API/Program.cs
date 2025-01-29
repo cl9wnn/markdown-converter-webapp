@@ -6,9 +6,16 @@ using API.Extensions;
 using API.Middlewares;
 using Application.Interfaces.Services;
 using Core.Interfaces.Repositories;
-using Core.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile("appsettings.Secrets.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables()
+    .AddCommandLine(args);
+
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IAccountService, AccountService>();
@@ -17,7 +24,7 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IDocumentsService, DocumentsService>();
 builder.Services.AddScoped<IDocumentsRepository, DocumentsRepository>();
 
-builder.Services.AddScoped<IDocumentAccessService,DocumentAccessService>();
+builder.Services.AddScoped<IDocumentAccessService, DocumentAccessService>();
 builder.Services.AddScoped<IDocumentAccessRepository, DocumentAccessRepository>();
 
 builder.Services.AddScoped<IMdService, MdService>();
@@ -31,11 +38,11 @@ builder.Services.Configure<MinIoSettings>(builder.Configuration.GetSection("MinI
 builder.Services.AddDataBase(builder.Configuration);
 builder.Services.AddAuth(builder.Configuration);
 builder.Services.AddMdProcessor();
-builder.Services.AddFilters()
-    ;
+builder.Services.AddFilters();
 
 var app = builder.Build();
 
+app.Services.ApplyMigrations();
 app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseStaticFiles();
 app.MapControllers();

@@ -9,7 +9,9 @@ using Markdown.Classes.TagFactory;
 using Markdown.Classes.Tags;
 using Markdown.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Persistence;
 
 namespace API.Extensions;
 
@@ -83,5 +85,22 @@ public static class ApiExtensions
         services.AddSingleton<IMarkdownProcessor,MarkdownProcessor>();
 
         return services;
+    }
+    
+    public static void ApplyMigrations(this IServiceProvider services)
+    {
+        using var scope = services.CreateScope();
+        var serviceProvider = scope.ServiceProvider;
+
+        try
+        {
+            var context = serviceProvider.GetRequiredService<WebDbContext>();
+            context.Database.Migrate();
+        }
+        catch (Exception ex)
+        {
+            var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "Ошибка при применении миграций.");
+        }
     }
 }
