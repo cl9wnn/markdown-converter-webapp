@@ -233,9 +233,6 @@ async function getDocument(documentId) {
                 return await getDocument(documentId);
             }
         }
-        else if (response.status === 403) {
-            window.location.href = '/forbidden';
-        }
         else {
             const data = await response.json();
             alert(data.error);

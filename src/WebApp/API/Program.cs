@@ -3,7 +3,6 @@ using Application.Services;
 using Persistence;
 using Persistence.Repositories;
 using API.Extensions;
-using API.Middlewares;
 using Application.Interfaces.Services;
 using Core.Interfaces.Repositories;
 
@@ -43,7 +42,9 @@ builder.Services.AddFilters();
 var app = builder.Build();
 
 app.Services.ApplyMigrations();
-app.UseMiddleware<ErrorHandlingMiddleware>();
+
+app.UseExceptionHandler("/ErrorPages/500.html"); 
+app.UseStatusCodePagesWithReExecute("/ErrorPages/{0}.html");
 app.UseStaticFiles();
 app.MapControllers();
 app.UseAuthentication();
