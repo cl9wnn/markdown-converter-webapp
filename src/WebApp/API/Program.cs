@@ -3,6 +3,7 @@ using Application.Services;
 using Persistence;
 using Persistence.Repositories;
 using API.Extensions;
+using API.Middlewares;
 using Application.Interfaces.Services;
 using Core.Interfaces.Repositories;
 
@@ -28,8 +29,8 @@ builder.Services.AddScoped<IDocumentAccessRepository, DocumentAccessRepository>(
 
 builder.Services.AddScoped<IMdService, MdService>();
 
-builder.Services.AddScoped<JwtService>();
-builder.Services.AddScoped<MinioService>();
+builder.Services.AddSingleton<JwtService>();
+builder.Services.AddSingleton<MinioService>();
 
 builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection("AuthSettings"));
 builder.Services.Configure<MinIoSettings>(builder.Configuration.GetSection("MinIoSettings"));
@@ -45,9 +46,12 @@ app.Services.ApplyMigrations();
 
 app.UseExceptionHandler("/ErrorPages/500.html"); 
 app.UseStatusCodePagesWithReExecute("/ErrorPages/{0}.html");
+app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.MapControllers();
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<RequestLoggingMiddleware>();
+app.MapControllers();
 
 app.Run();

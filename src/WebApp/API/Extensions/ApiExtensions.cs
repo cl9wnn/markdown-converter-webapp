@@ -17,7 +17,7 @@ namespace API.Extensions;
 
 public static class ApiExtensions
 {
-    public static IServiceCollection AddAuth(this IServiceCollection serviceCollection, IConfiguration configuration)
+    public static void AddAuth(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         
         var authSettings = configuration.GetSection("AuthSettings").Get<AuthSettings>();
@@ -48,18 +48,15 @@ public static class ApiExtensions
                     }
                 };
             });
-        
-        return serviceCollection;
     }
 
-    public static IServiceCollection AddFilters(this IServiceCollection services)
+    public static void AddFilters(this IServiceCollection services)
     {
         services.AddScoped<UserExistsFilter>();
         services.AddScoped<DocumentExistsFilter>();
-        return services;
     }
     
-    public static IServiceCollection AddMdProcessor(this IServiceCollection services)
+    public static void AddMdProcessor(this IServiceCollection services)
     {
         
         services.AddSingleton<IEnumerable<TagElement>>(new List<TagElement>
@@ -83,8 +80,6 @@ public static class ApiExtensions
         services.AddSingleton<IRenderer, HtmlRenderer>();
 
         services.AddSingleton<IMarkdownProcessor,MarkdownProcessor>();
-
-        return services;
     }
     
     public static void ApplyMigrations(this IServiceProvider services)
