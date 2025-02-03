@@ -10,7 +10,6 @@ const documentsBtn = document.getElementById("documentsBtn");
 const saveDocumentBtn = document.getElementById("saveDocumentBtn");
 const renameDocumentBtn = document.getElementById("renameDocumentBtn");
 const deleteDocumentBtn = document.getElementById("deleteDocumentBtn");
-const accessBtn = document.getElementById("accessBtn");
 const accessSettingsBtn = document.getElementById("accessSettingsBtn");
 
 
@@ -54,8 +53,12 @@ deleteDocumentBtn.addEventListener('click', async (event) => {
 
 accessSettingsBtn.addEventListener('click', async (event) => {
     const accessList = await getAccessList(documentId);
-    await createAccessSettingsModal(accessList, clearPermission);
+
+    if (accessList) {
+        await createAccessSettingsModal(accessList, clearPermission);
+    }
 });
+
 copyBtn.addEventListener("click", async () => {
     const htmlContent = document.getElementById("markdown-result").innerHTML;
 
@@ -192,17 +195,14 @@ async function saveMarkdown(documentId) {
         });
 
         if (response.ok) {
-
         } else if (response.status === 401) {
             const loginSuccessful = await showForm(createLoginForm, '/auth/signin', 'Sign In');
 
             if (loginSuccessful) {
             }
-        }
-        else if (response.status === 403) {
+        } else if (response.status === 403) {
             customAlert('У вас недостаточно прав!');
-        }
-        else {
+        } else {
             const data = await response.json();
             alert(data.error);
         }
@@ -232,6 +232,9 @@ async function getDocument(documentId) {
             if (loginSuccessful) {
                 return await getDocument(documentId);
             }
+        }
+        else if (response.status === 403) {
+            window.location.href = '/ErrorPages/403.html';
         }
         else {
             const data = await response.json();
@@ -382,6 +385,7 @@ async function getAccessList(documentId){
     } catch (error) {
         alert(error);
     }
+    return undefined;
 }
 
 async function clearPermission(documentId, email) {
