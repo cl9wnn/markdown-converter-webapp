@@ -45,7 +45,7 @@ var app = builder.Build();
 app.Services.ApplyMigrations();
 
 app.UseExceptionHandler("/ErrorPages/500.html"); 
-app.UseStatusCodePagesWithReExecute("/ErrorPages/{0}.html");
+//app.UseStatusCodePagesWithReExecute("/ErrorPages/{0}.html");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();

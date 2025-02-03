@@ -1,5 +1,5 @@
+using API.Attributes;
 using API.Contracts;
-using API.Filters;
 using Application.Interfaces.Services;
 using Core.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -9,12 +9,13 @@ namespace API.Controllers;
 
 
 [ApiController]
+[Authorize]
+[IsUserExists]
+[IsDocumentExists]
 [Route("api/[controller]")]
 public class MarkdownController(IMdService mdService): ControllerBase
 {
-    [ServiceFilter(typeof(UserExistsFilter))]
-    [ServiceFilter(typeof(DocumentExistsFilter))]
-    [TypeFilter(typeof(ValidatePermissionFilter), Arguments = new object[] { RequiredAccessLevel.Reader })]
+    [ValidatePermission(RequiredAccessLevel.Reader)]
     [HttpPost("convert/{documentId:guid}")]
     public async Task<IActionResult> GetHtml(Guid documentId, [FromBody] MarkdownRequest request)
     {
@@ -25,9 +26,7 @@ public class MarkdownController(IMdService mdService): ControllerBase
             : BadRequest(new { Error = htmlResult.ErrorMessage });
     }
     
-    //[ServiceFilter(typeof(UserExistsFilter))]
-   // [ServiceFilter(typeof(DocumentExistsFilter))]
-   // [TypeFilter(typeof(ValidatePermissionFilter), Arguments = new object[] { RequiredAccessLevel.Editor })]
+    [ValidatePermission(RequiredAccessLevel.Editor)]
     [HttpPost("save/{documentId:guid}")]
     public async Task<IActionResult> SaveDocumentAsync(Guid documentId, [FromBody] string mdContent)
     {
@@ -38,9 +37,7 @@ public class MarkdownController(IMdService mdService): ControllerBase
             : BadRequest(new { Error = saveResult.ErrorMessage });
     }
     
- //   [ServiceFilter(typeof(UserExistsFilter))]
-  //  [ServiceFilter(typeof(DocumentExistsFilter))]
- //   [TypeFilter(typeof(ValidatePermissionFilter), Arguments = new object[] { RequiredAccessLevel.Reader })]
+    [ValidatePermission(RequiredAccessLevel.Reader)]
     [HttpGet("get/{documentId:guid}")]
     public async Task<IActionResult> GetMarkdownFile(Guid documentId)
     {

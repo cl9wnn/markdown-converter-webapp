@@ -9,11 +9,11 @@ namespace API.Controllers;
 
 [ApiController]
 [Authorize]
+[IsUserExists]
 [Route("api/[controller]")]
 public class DocumentsController(IDocumentsService documentsService): ControllerBase
 {
     
-    [ServiceFilter(typeof(UserExistsFilter))]
     [HttpPost("create")]
     public async Task<IActionResult> CreateDocumentAsync([FromBody] string name)
     {
@@ -26,7 +26,6 @@ public class DocumentsController(IDocumentsService documentsService): Controller
             : BadRequest(new { Error = createResult.ErrorMessage });
     }
     
-    [ServiceFilter(typeof(UserExistsFilter))]
     [HttpGet("get")]
     public async Task<IActionResult> GetAllDocumentsAsync()
     {
@@ -38,11 +37,10 @@ public class DocumentsController(IDocumentsService documentsService): Controller
             ? Ok(new {Projects = getResult.Data})
             : BadRequest(new { Error = getResult.ErrorMessage });
     }
-    
-    [ServiceFilter(typeof(UserExistsFilter))]
-    [ServiceFilter(typeof(DocumentExistsFilter))] 
+
+    [IsDocumentExists]
     [ValidatePermission(RequiredAccessLevel.Reader)]
-   [HttpGet("{documentId:guid}")]
+    [HttpGet("{documentId:guid}")]
     public async Task<IActionResult> GetDocumentAsync(Guid documentId)
     {
         var getDocumentResult = await documentsService.GetDocumentAsync(documentId);
@@ -52,8 +50,7 @@ public class DocumentsController(IDocumentsService documentsService): Controller
             : BadRequest(new { Error = getDocumentResult.ErrorMessage });
     }
     
-    [ServiceFilter(typeof(UserExistsFilter))]
-    [ServiceFilter(typeof(DocumentExistsFilter))]
+    [IsDocumentExists]
     [ValidatePermission(RequiredAccessLevel.Editor)]
     [HttpPost("{documentId:guid}/rename")]
     public async Task<IActionResult> RenameDocumentAsync(Guid documentId, [FromBody] string newName)
@@ -65,8 +62,7 @@ public class DocumentsController(IDocumentsService documentsService): Controller
             : BadRequest(new { Error = renameResult.ErrorMessage });
     }
     
-    [ServiceFilter(typeof(UserExistsFilter))]
-    [ServiceFilter(typeof(DocumentExistsFilter))]
+    [IsDocumentExists]
     [ValidatePermission(RequiredAccessLevel.Author)]
     [HttpDelete("{documentId:guid}/delete")]
     public async Task<IActionResult> DeleteDocumentAsync(Guid documentId)

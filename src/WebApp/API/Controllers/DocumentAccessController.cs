@@ -1,6 +1,5 @@
 ﻿using API.Attributes;
 using API.Contracts;
-using API.Filters;
 using Application.Interfaces.Services;
 using Core.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -10,12 +9,12 @@ namespace API.Controllers;
 
 [ApiController]
 [Authorize]
+[IsUserExists]
+[IsDocumentExists]
 [Route("api/[controller]")]
 public class DocumentAccessController(IDocumentAccessService documentAccessService, IAccountService accountService): ControllerBase
 {
     
-    [ServiceFilter(typeof(UserExistsFilter))]
-    [ServiceFilter(typeof(DocumentExistsFilter))]
     [ValidatePermission(RequiredAccessLevel.Author)]
     [HttpPost("{documentId:guid}/set-permission")]
     public async Task<IActionResult> SetPermissionAsync(Guid documentId, [FromBody] SetPermissionRequest request)
@@ -38,8 +37,6 @@ public class DocumentAccessController(IDocumentAccessService documentAccessServi
             : BadRequest(new { Error = setPermissionResult.ErrorMessage });
     }
 
-    [ServiceFilter(typeof(UserExistsFilter))]
-    [ServiceFilter(typeof(DocumentExistsFilter))]
     [ValidatePermission(RequiredAccessLevel.Author)]
     [HttpGet("{documentId:guid}/get-permission")]
     public async Task<IActionResult> GetDocumentPermissionListAsync(Guid documentId)
@@ -51,8 +48,6 @@ public class DocumentAccessController(IDocumentAccessService documentAccessServi
             : BadRequest(new { Error = getResult.ErrorMessage });
     }
     
-    [ServiceFilter(typeof(UserExistsFilter))]
-    [ServiceFilter(typeof(DocumentExistsFilter))]
     [ValidatePermission(RequiredAccessLevel.Author)]
     [HttpPost("{documentId:guid}/clear-permission")]
     public async Task<IActionResult> ClearDocumentPermissionAsync(Guid documentId, [FromBody] string email)
