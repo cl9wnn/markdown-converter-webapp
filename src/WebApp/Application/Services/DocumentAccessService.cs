@@ -47,7 +47,7 @@ public class DocumentAccessService(IDocumentAccessRepository documentAccessRepos
 
         foreach (var p in getPermissionsResult.Data)
         {
-            var accountResult = await accountRepository.GetByAccountIdAsync(p.AccountId);
+            var accountResult = await accountRepository.GetByIdAsync(p.AccountId);
 
             if (!accountResult.IsSuccess)
                 continue; 

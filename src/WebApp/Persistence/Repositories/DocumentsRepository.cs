@@ -8,7 +8,7 @@ namespace Persistence.Repositories;
 
 public class DocumentsRepository(WebDbContext dbContext): IDocumentsRepository
 {
-    public async Task<Result<Guid>> CreateDocumentAsync(Guid? accountId, string name)
+    public async Task<Result<Guid>> CreateAsync(Guid? accountId, string name)
     {
         var accountEntity = await dbContext.Accounts.FirstOrDefaultAsync(a => a.AccountId == accountId);
         
@@ -30,68 +30,59 @@ public class DocumentsRepository(WebDbContext dbContext): IDocumentsRepository
         return Result<Guid>.Success(documentEntity.DocumentId);
     }
 
-    public async Task<Result<string>> DeleteDocumentAsync(Guid documentId)
-    { 
-        var documentEntity = await dbContext.Documents.FirstOrDefaultAsync(d => d.DocumentId == documentId);
-
-        if (documentEntity == null)
-            return Result<string>.Failure("Document not found")!;
+    public async Task<Result> DeleteAsync(Guid documentId)
+    {
+        var deleted = await dbContext.Documents
+            .Where(d => d.DocumentId == documentId)
+            .ExecuteDeleteAsync();
         
-        dbContext.Documents.Remove(documentEntity!);
-        await dbContext.SaveChangesAsync();
-        
-        return Result<string>.Success(documentEntity.Name!);
+        return deleted > 0
+            ? Result.Success()
+            : Result.Failure("Document not found");
     }
     
-    public async Task<Result<Document>> GetDocumentAsync(Guid documentId)
+    public async Task<Result<Document>> GetAsync(Guid documentId)
     {
         var documentEntity = await dbContext.Documents.FirstOrDefaultAsync(d => d.DocumentId == documentId)!;
         
         if (documentEntity == null)
             return Result<Document>.Failure("Document not found")!;
 
-        var document = new Document
-        {
-            DocumentId = documentEntity.DocumentId,
-            AuthorId = documentEntity.AuthorId,
-            Name = documentEntity.Name,
-            CreatedAt = documentEntity.CreatedAt,
-        };
+        var document = Document.Create(documentEntity.DocumentId, documentEntity.AuthorId, documentEntity.Name, documentEntity.CreatedAt);
 
         return Result<Document>.Success(document);
     }
     
-    public async Task<Result<ICollection<Document>>> GetDocumentsAsync(Guid? accountId)
+    public async Task<Result<ICollection<Document>>> GetAllByIdAsync(Guid? accountId)
     {
         var documentEntities = await dbContext.Documents
             .Where(d => d.AuthorId == accountId)
             .ToListAsync();
         
-        var documents = documentEntities.Select(documentEntity => new Document
-        {
-            DocumentId = documentEntity.DocumentId,
-            AuthorId = documentEntity.AuthorId,
-            Name = documentEntity.Name,
-            CreatedAt = documentEntity.CreatedAt,
-        }).ToList();
+        var documents = documentEntities.Select(documentEntity =>
+                Document.Create(
+                    documentEntity.DocumentId,
+                    documentEntity.AuthorId,
+                    documentEntity.Name,
+                    documentEntity.CreatedAt
+                    )).ToList();
         
         return Result<ICollection<Document>>.Success(documents);
     }
     
-    public async Task<Result<string>> RenameDocumentAsync(Guid documentId, string newName)
+    public async Task<Result<string>> RenameAsync(Guid documentId, string newName)
     {
-        var documentEntity = await  dbContext.Documents.FirstOrDefaultAsync(d => d.DocumentId == documentId);
-        
-        if (documentEntity == null)
-            return Result<string>.Failure("Document not found")!;
-        
-        documentEntity.Name = newName;
-        await dbContext.SaveChangesAsync();
-        
-        return Result<string>.Success(newName);
+        var updated = await dbContext.Documents
+            .Where(d => d.DocumentId == documentId)
+            .ExecuteUpdateAsync(s => s
+                .SetProperty(d => d.Name, newName));
+
+        return updated > 0 
+            ? Result<string>.Success(newName) 
+            : Result<string>.Failure("Document not found")!;
     }
     
-    public async Task<bool> IsDocumentExistsByIdAsync(Guid documentId)
+    public async Task<bool> IsExistsByIdAsync(Guid documentId)
     {
        return await dbContext.Documents.AnyAsync(a => a.DocumentId == documentId);
     }

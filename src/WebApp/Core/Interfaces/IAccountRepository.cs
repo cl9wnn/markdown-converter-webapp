@@ -5,8 +5,8 @@ namespace Core.Interfaces.Repositories;
 
 public interface IAccountRepository
 {
-     Task<Result> AddUserAsync(Account accountEntity);
+     Task<Result> AddAsync(Account accountEntity);
      Task<Result<Account?>> GetByEmailAsync(string email);
-     Task<bool> IsUserExistsByIdAsync(Guid accountId);
-     Task<Result<Account>> GetByAccountIdAsync(Guid accountId);
+     Task<bool> IsExistsByIdAsync(Guid accountId);
+     Task<Result<Account>> GetByIdAsync(Guid accountId);
 }

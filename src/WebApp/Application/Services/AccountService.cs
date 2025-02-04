@@ -10,18 +10,13 @@ public class AccountService(IAccountRepository accountRepository, JwtService jwt
 {
     public async Task<Result<string>> RegisterAsync(string email, string password, string firstName)
     {
-        var account = new Account
-        {
-            AccountId = Guid.NewGuid(),
-            Email = email,
-            PasswordHash = password,
-            FirstName = firstName
-        };
+        var account = Account.CreateAccount(Guid.NewGuid(), email, firstName, password);
         
         var passwordHash = new PasswordHasher<Account>().HashPassword(account, password);
+        
         account.PasswordHash = passwordHash;
         
-        var addResult = await accountRepository.AddUserAsync(account);
+        var addResult = await accountRepository.AddAsync(account);
 
         if (addResult.IsSuccess)
         {
@@ -62,6 +57,6 @@ public class AccountService(IAccountRepository accountRepository, JwtService jwt
 
     public async Task<bool> DoesUserExistAsync(Guid accountId)
     { 
-        return await accountRepository.IsUserExistsByIdAsync(accountId);
+        return await accountRepository.IsExistsByIdAsync(accountId);
     }
 }

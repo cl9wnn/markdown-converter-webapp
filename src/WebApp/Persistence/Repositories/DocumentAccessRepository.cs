@@ -61,29 +61,13 @@ public class DocumentAccessRepository(WebDbContext dbContext): IDocumentAccessRe
     
     public async Task<Result> ClearPermissionsAsync(Guid documentId, Guid accountId)
     {
-        var accountEntity = await dbContext.Accounts
-            .FirstOrDefaultAsync(a => a.AccountId == accountId);
-
-        if (accountEntity == null)
-            return Result.Failure("Account not found");
-        
-        var documentEntity = await dbContext.Documents
-            .FirstOrDefaultAsync(d => d.DocumentId == documentId);
-
-        if (documentEntity == null)
-            return Result.Failure("Document not found");
-        
-        var permissionsToRemove = await dbContext.DocumentShares
+        var deletedCount = await dbContext.DocumentShares
             .Where(ds => ds.DocumentId == documentId && ds.AccountId == accountId)
-            .ToListAsync();
-        
-        if (!permissionsToRemove.Any())
-            return Result.Failure("Permissions not found");
+            .ExecuteDeleteAsync();
 
-        dbContext.DocumentShares.RemoveRange(permissionsToRemove);
-        await dbContext.SaveChangesAsync();
-        
-        return Result.Success();
+        return deletedCount > 0 
+            ? Result.Success() 
+            : Result.Failure("Permissions not found");
     }
 
     public async Task<Result<ICollection<Permission>>> GetAllDocumentPermissionsAsync(Guid documentId)
@@ -92,12 +76,12 @@ public class DocumentAccessRepository(WebDbContext dbContext): IDocumentAccessRe
             .Where(dp => dp.DocumentId == documentId)
             .ToListAsync();
 
-        var documentPermissionsList = documentPermissions.Select(dp => new Permission
-        {
-            PermissionId = dp.PermissionId,
-            DocumentId = dp.DocumentId,
-            AccountId = dp.AccountId
-        }).ToList();
+        var documentPermissionsList = documentPermissions.Select(dp => 
+            Permission.Create(
+                dp.PermissionId,
+                dp. AccountId,
+                dp.DocumentId
+                )).ToList();
         
         return Result<ICollection<Permission>>.Success(documentPermissionsList);
     }

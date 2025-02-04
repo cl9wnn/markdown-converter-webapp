@@ -12,7 +12,7 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
     {
         var ctx = new CancellationTokenSource();
 
-        var createResult = await documentRepository.CreateDocumentAsync(accountId, name);
+        var createResult = await documentRepository.CreateAsync(accountId, name);
         
         if (!createResult.IsSuccess)
             return Result.Failure(createResult.ErrorMessage!);
@@ -26,7 +26,7 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
         }
         catch (Exception ex)
         {
-            await documentRepository.DeleteDocumentAsync(createResult.Data);
+            await documentRepository.DeleteAsync(createResult.Data);
             return Result.Failure(ex.Message);
         }
         return Result.Success();
@@ -34,7 +34,7 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
 
     public async Task<Result<ICollection<Document>>> GetUserDocumentsAsync(Guid? accountId)
     {
-        var getResult = await documentRepository.GetDocumentsAsync(accountId);
+        var getResult = await documentRepository.GetAllByIdAsync(accountId);
         
         return getResult.IsSuccess
             ? Result<ICollection<Document>>.Success(getResult.Data)
@@ -48,7 +48,7 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
         if (!authorNameResult.IsSuccess)
             return Result<DocumentDto>.Failure(authorNameResult.ErrorMessage!)!;
         
-        var getResult = await documentRepository.GetDocumentAsync(documentId);
+        var getResult = await documentRepository.GetAsync(documentId);
 
         var documentDto = new DocumentDto
         {
@@ -64,18 +64,18 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
     
     public async Task<Result<string>> RenameProjectAsync(Guid documentId, string newName)
     {
-        var renameResult = await documentRepository.RenameDocumentAsync(documentId, newName);
+        var renameResult = await documentRepository.RenameAsync(documentId, newName);
         
         return renameResult.IsSuccess
             ? Result<string>.Success(renameResult.Data)
             : Result<string>.Failure(renameResult.ErrorMessage!)!;
     }
     
-    public async Task<Result<string>> DeleteProjectAsync(Guid documentId)
+    public async Task<Result> DeleteProjectAsync(Guid documentId)
     {
         var ctx = new CancellationTokenSource();
         
-        var deleteResult = await documentRepository.DeleteDocumentAsync(documentId);
+        var deleteResult = await documentRepository.DeleteAsync(documentId);
         
         var fileName = $"{documentId}.md"; 
 
@@ -85,17 +85,17 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
         }
         catch (Exception ex)
         {
-            return Result<string>.Failure(ex.Message)!;
+            return Result.Failure(ex.Message)!;
         }
         
         return deleteResult.IsSuccess
-            ? Result<string>.Success(deleteResult.Data)
-            : Result<string>.Failure(deleteResult.ErrorMessage!)!;
+            ? Result.Success()
+            : Result.Failure(deleteResult.ErrorMessage!)!;
     }
     
     public async Task<bool> DoesDocumentExistAsync(Guid documentId)
     {
-        return await documentRepository.IsDocumentExistsByIdAsync(documentId);
+        return await documentRepository.IsExistsByIdAsync(documentId);
     }
     
 }

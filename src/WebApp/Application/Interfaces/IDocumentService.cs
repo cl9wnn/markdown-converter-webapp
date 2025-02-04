@@ -9,7 +9,7 @@ public interface IDocumentsService
     Task<Result<ICollection<Document>>> GetUserDocumentsAsync(Guid? accountId);
     Task<Result<DocumentDto>> GetDocumentAsync(Guid documentId);
     Task<Result<string>> RenameProjectAsync(Guid documentId, string newName);
-    Task<Result<string>> DeleteProjectAsync(Guid documentId);
+    Task<Result> DeleteProjectAsync(Guid documentId);
     Task<bool> DoesDocumentExistAsync(Guid documentId);
 
 }
