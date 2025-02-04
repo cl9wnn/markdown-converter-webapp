@@ -1,5 +1,5 @@
-using Application.Interfaces.Services;
-using Core.Interfaces.Repositories;
+using Application.Interfaces;
+using Core.Interfaces;
 using Core.Models;
 using Core.Utils;
 using Microsoft.AspNetCore.Identity;
@@ -55,7 +55,7 @@ public class AccountService(IAccountRepository accountRepository, JwtService jwt
             : Result<Guid>.Failure(accountResult.ErrorMessage!)!;
     }
 
-    public async Task<bool> DoesUserExistAsync(Guid accountId)
+    public async Task<bool> IsExistsAsync(Guid accountId)
     { 
         return await accountRepository.IsExistsByIdAsync(accountId);
     }

@@ -4,8 +4,8 @@ using Persistence;
 using Persistence.Repositories;
 using API.Extensions;
 using API.Middlewares;
-using Application.Interfaces.Services;
-using Core.Interfaces.Repositories;
+using Application.Interfaces;
+using Core.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

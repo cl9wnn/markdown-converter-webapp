@@ -1,6 +1,6 @@
 ﻿using API.Contracts;
 using API.Validators;
-using Application.Interfaces.Services;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;

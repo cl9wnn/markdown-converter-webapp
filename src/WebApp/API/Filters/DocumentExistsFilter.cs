@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using Application.Interfaces.Services;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 namespace API.Filters;
@@ -40,7 +40,7 @@ public class DocumentExistsFilter(IDocumentsService documentsService) : IAsyncAc
         if (!Guid.TryParse(requestDocumentId, out var documentId))
             return false;
 
-        var isExists = await documentsService.DoesDocumentExistAsync(documentId);
+        var isExists = await documentsService.IsDocumentExistsAsync(documentId);
         
         if (!isExists)
             return false;

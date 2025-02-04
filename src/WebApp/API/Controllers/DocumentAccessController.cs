@@ -1,6 +1,7 @@
 ﻿using API.Attributes;
 using API.Contracts;
-using Application.Interfaces.Services;
+using Application.Interfaces;
+using Core.Enums;
 using Core.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

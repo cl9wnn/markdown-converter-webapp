@@ -1,6 +1,7 @@
-﻿using Application.Interfaces.Services;
+﻿using Application.Interfaces;
 using Application.Models;
-using Core.Interfaces.Repositories;
+using Core.Enums;
+using Core.Interfaces;
 using Core.Utils;
 namespace Application.Services;
 

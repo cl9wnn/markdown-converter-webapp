@@ -1,10 +1,12 @@
 ﻿using API.Attributes;
 using API.Extensions;
 using API.Filters;
+using Application.Interfaces;
+using Core.Enums;
 using Core.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Application.Interfaces.Services;
+
 namespace API.Controllers;
 
 [ApiController]
@@ -19,7 +21,7 @@ public class DocumentsController(IDocumentsService documentsService): Controller
     {
         var accountId = HttpContext.GetAccountId();
         
-        var createResult = await documentsService.CreateProjectAsync(accountId, name);
+        var createResult = await documentsService.CreateDocumentAsync(accountId, name);
         
         return createResult.IsSuccess
             ? Ok()
@@ -55,7 +57,7 @@ public class DocumentsController(IDocumentsService documentsService): Controller
     [HttpPost("{documentId:guid}/rename")]
     public async Task<IActionResult> RenameDocumentAsync(Guid documentId, [FromBody] string newName)
     {
-        var renameResult = await documentsService.RenameProjectAsync(documentId, newName!);
+        var renameResult = await documentsService.RenameDocumentAsync(documentId, newName!);
         
         return renameResult.IsSuccess
             ? Ok(new {NewName = renameResult.Data})
@@ -67,7 +69,7 @@ public class DocumentsController(IDocumentsService documentsService): Controller
     [HttpDelete("{documentId:guid}/delete")]
     public async Task<IActionResult> DeleteDocumentAsync(Guid documentId)
     {
-        var deleteResult = await documentsService.DeleteProjectAsync(documentId);
+        var deleteResult = await documentsService.DeleteDocumentAsync(documentId);
         
         return deleteResult.IsSuccess
             ? Ok()

@@ -1,7 +1,7 @@
 using Core.Models;
 using Core.Utils;
 
-namespace Core.Interfaces.Repositories;
+namespace Core.Interfaces;
 
 public interface IAccountRepository
 {

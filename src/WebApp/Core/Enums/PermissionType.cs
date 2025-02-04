@@ -1,4 +1,4 @@
-﻿namespace Core.Utils;
+﻿namespace Core.Enums;
 
 public enum PermissionType
 {

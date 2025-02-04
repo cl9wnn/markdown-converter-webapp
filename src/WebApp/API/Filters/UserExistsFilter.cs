@@ -1,4 +1,4 @@
-﻿using Application.Interfaces.Services;
+﻿using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -16,7 +16,7 @@ public class UserExistsFilter(IAccountService accountService): IAsyncActionFilte
             return;
         }
 
-        var isExists = await accountService.DoesUserExistAsync(accountId);
+        var isExists = await accountService.IsExistsAsync(accountId);
 
         if (!isExists)
         {

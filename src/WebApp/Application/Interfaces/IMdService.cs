@@ -1,6 +1,6 @@
 ﻿using Core.Utils;
 
-namespace Application.Interfaces.Services;
+namespace Application.Interfaces;
 
 public interface IMdService
 {

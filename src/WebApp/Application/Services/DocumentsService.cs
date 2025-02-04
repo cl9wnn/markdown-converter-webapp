@@ -1,6 +1,6 @@
-﻿using Application.Interfaces.Services;
+﻿using Application.Interfaces;
 using Application.Models;
-using Core.Interfaces.Repositories;
+using Core.Interfaces;
 using Core.Models;
 using Core.Utils;
 namespace Application.Services;
@@ -8,7 +8,7 @@ namespace Application.Services;
 public class DocumentsService(IDocumentsRepository documentRepository, MinioService minIoService): IDocumentsService
 {
 
-    public async Task<Result> CreateProjectAsync(Guid? accountId, string name)
+    public async Task<Result> CreateDocumentAsync(Guid? accountId, string name)
     {
         var ctx = new CancellationTokenSource();
 
@@ -62,7 +62,7 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
             : Result<DocumentDto>.Failure(getResult.ErrorMessage!)!;
     }
     
-    public async Task<Result<string>> RenameProjectAsync(Guid documentId, string newName)
+    public async Task<Result<string>> RenameDocumentAsync(Guid documentId, string newName)
     {
         var renameResult = await documentRepository.RenameAsync(documentId, newName);
         
@@ -71,7 +71,7 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
             : Result<string>.Failure(renameResult.ErrorMessage!)!;
     }
     
-    public async Task<Result> DeleteProjectAsync(Guid documentId)
+    public async Task<Result> DeleteDocumentAsync(Guid documentId)
     {
         var ctx = new CancellationTokenSource();
         
@@ -93,7 +93,7 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
             : Result.Failure(deleteResult.ErrorMessage!)!;
     }
     
-    public async Task<bool> DoesDocumentExistAsync(Guid documentId)
+    public async Task<bool> IsDocumentExistsAsync(Guid documentId)
     {
         return await documentRepository.IsExistsByIdAsync(documentId);
     }
