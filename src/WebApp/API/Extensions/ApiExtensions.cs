@@ -19,7 +19,6 @@ public static class ApiExtensions
 {
     public static void AddAuth(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
-        
         var authSettings = configuration.GetSection("AuthSettings").Get<AuthSettings>();
 
         serviceCollection.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -50,6 +49,22 @@ public static class ApiExtensions
             });
     }
 
+    public static void AddRedis(this IServiceCollection services, IConfiguration configuration)
+    {
+        var redisSettings = configuration.GetSection("RedisSettings").Get<RedisSettings>();
+
+        if (redisSettings == null || string.IsNullOrEmpty(redisSettings.Host))
+            throw new ArgumentException("Redis settings are missing or invalid.");
+
+        var redisConfiguration = $"{redisSettings.Host}:{redisSettings.Port}";
+
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = redisConfiguration;
+            options.InstanceName = "MdProcessor_"; 
+        });
+    }
+    
     public static void AddFilters(this IServiceCollection services)
     {
         services.AddScoped<UserExistsFilter>();

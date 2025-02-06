@@ -9,11 +9,15 @@
     depends_on:
       - db
       - minio
+      - redis
     environment:
       - ConnectionStrings__Postgres=Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
       - Minio__Endpoint=http://minio:9000
       - Minio__AccessKey=${MINIO_ROOT_USER}
       - Minio__SecretKey=${MINIO_ROOT_PASSWORD}
+      - Redis__Host=redis
+      - Redis__Port=6379
+
   db:
     image: postgres:15
     container_name: postgres
@@ -39,6 +43,17 @@
     volumes:
       - minio_data:/data
 
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: always
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+
 volumes:
   db_data:
   minio_data:
+  redis_data:

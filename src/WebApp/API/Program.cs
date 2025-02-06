@@ -31,12 +31,14 @@ builder.Services.AddScoped<IMdService, MdService>();
 
 builder.Services.AddSingleton<JwtService>();
 builder.Services.AddSingleton<MinioService>();
+builder.Services.AddSingleton<RedisCacheService>();
 
 builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection("AuthSettings"));
 builder.Services.Configure<MinIoSettings>(builder.Configuration.GetSection("MinIoSettings"));
 
 builder.Services.AddDataBase(builder.Configuration);
 builder.Services.AddAuth(builder.Configuration);
+builder.Services.AddRedis(builder.Configuration);
 builder.Services.AddMdProcessor();
 builder.Services.AddFilters();
 

@@ -5,9 +5,8 @@ using Core.Models;
 using Core.Utils;
 namespace Application.Services;
 
-public class DocumentsService(IDocumentsRepository documentRepository, MinioService minIoService): IDocumentsService
+public class DocumentsService(IDocumentsRepository documentRepository, MinioService minIoService, RedisCacheService cacheService): IDocumentsService
 {
-
     public async Task<Result> CreateDocumentAsync(Guid? accountId, string name)
     {
         var ctx = new CancellationTokenSource();
@@ -29,16 +28,29 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
             await documentRepository.DeleteAsync(createResult.Data);
             return Result.Failure(ex.Message);
         }
+        
+        await cacheService.RemoveValueAsync($"user_docs_{accountId}");
+
         return Result.Success();
     }
 
     public async Task<Result<ICollection<Document>>> GetUserDocumentsAsync(Guid? accountId)
     {
-        var getResult = await documentRepository.GetAllByIdAsync(accountId);
+        var cacheKey = $"user_docs_{accountId}";
+
+        var cachedDocuments = await cacheService.GetValueAsync<ICollection<Document>>(cacheKey);
         
-        return getResult.IsSuccess
-            ? Result<ICollection<Document>>.Success(getResult.Data)
-            : Result<ICollection<Document>>.Failure(getResult.ErrorMessage!)!;
+        if (cachedDocuments is not null)
+            return Result<ICollection<Document>>.Success(cachedDocuments);
+        
+        var getResult = await documentRepository.GetAllByIdAsync(accountId);
+
+        if (!getResult.IsSuccess)
+            return Result<ICollection<Document>>.Failure(getResult.ErrorMessage!)!;
+
+        await cacheService.SetValueAsync(cacheKey, getResult.Data, TimeSpan.FromMinutes(10));
+
+        return Result<ICollection<Document>>.Success(getResult.Data);
     }
     
     public async Task<Result<DocumentDto>> GetDocumentAsync(Guid documentId)
@@ -62,16 +74,19 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
             : Result<DocumentDto>.Failure(getResult.ErrorMessage!)!;
     }
     
-    public async Task<Result<string>> RenameDocumentAsync(Guid documentId, string newName)
+    public async Task<Result<string>> RenameDocumentAsync(Guid documentId, Guid? accountId, string newName)
     {
         var renameResult = await documentRepository.RenameAsync(documentId, newName);
         
-        return renameResult.IsSuccess
-            ? Result<string>.Success(renameResult.Data)
-            : Result<string>.Failure(renameResult.ErrorMessage!)!;
+        if  (!renameResult.IsSuccess)
+             Result<string>.Failure(renameResult.ErrorMessage!);
+        
+        await cacheService.RemoveValueAsync($"user_docs_{accountId}");
+
+        return Result<string>.Success(renameResult.Data);
     }
     
-    public async Task<Result> DeleteDocumentAsync(Guid documentId)
+    public async Task<Result> DeleteDocumentAsync(Guid documentId, Guid? accountId)
     {
         var ctx = new CancellationTokenSource();
         
@@ -88,9 +103,12 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
             return Result.Failure(ex.Message)!;
         }
         
-        return deleteResult.IsSuccess
-            ? Result.Success()
-            : Result.Failure(deleteResult.ErrorMessage!)!;
+        if (!deleteResult.IsSuccess)
+             Result.Failure(deleteResult.ErrorMessage!);
+
+        await cacheService.RemoveValueAsync($"user_docs_{accountId}");
+
+        return Result.Success();
     }
     
     public async Task<bool> IsDocumentExistsAsync(Guid documentId)

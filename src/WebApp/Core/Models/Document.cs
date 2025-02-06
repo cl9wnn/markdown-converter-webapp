@@ -1,4 +1,6 @@
-﻿namespace Core.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace Core.Models;
 
 public class Document
 {
@@ -6,7 +8,10 @@ public class Document
     public Guid? AuthorId { get; set; }
     public string? Name { get; set; }
     public DateTime CreatedAt { get; set; }
-
+    
+    [JsonConstructor] 
+    private Document() {}
+    
     private Document(Guid documentId, Guid? accountId, string? name, DateTime createdAt)
     {
         DocumentId = documentId;
@@ -14,7 +19,7 @@ public class Document
         Name = name;
         CreatedAt = createdAt;
     }
-
+    
     public static Document Create(Guid documentId, Guid? accountId, string? name, DateTime createdAt)
     {
         return new Document(documentId, accountId, name, createdAt);

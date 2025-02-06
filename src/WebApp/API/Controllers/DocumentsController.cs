@@ -57,7 +57,9 @@ public class DocumentsController(IDocumentsService documentsService): Controller
     [HttpPost("{documentId:guid}/rename")]
     public async Task<IActionResult> RenameDocumentAsync(Guid documentId, [FromBody] string newName)
     {
-        var renameResult = await documentsService.RenameDocumentAsync(documentId, newName!);
+        var accountId = HttpContext.GetAccountId();
+
+        var renameResult = await documentsService.RenameDocumentAsync(documentId, accountId, newName!);
         
         return renameResult.IsSuccess
             ? Ok(new {NewName = renameResult.Data})
@@ -69,7 +71,9 @@ public class DocumentsController(IDocumentsService documentsService): Controller
     [HttpDelete("{documentId:guid}/delete")]
     public async Task<IActionResult> DeleteDocumentAsync(Guid documentId)
     {
-        var deleteResult = await documentsService.DeleteDocumentAsync(documentId);
+        var accountId = HttpContext.GetAccountId();
+
+        var deleteResult = await documentsService.DeleteDocumentAsync(documentId, accountId);
         
         return deleteResult.IsSuccess
             ? Ok()
