@@ -165,7 +165,7 @@ button:active {
 }
 
 #accessSettingsBtn{
-    height: 40px;
+    background-image: url('/Resources/access.png');
 }
 #deleteDocumentBtn {
     background-image: url('/Resources/bin.png');

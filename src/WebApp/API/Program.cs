@@ -1,11 +1,11 @@
 using Application.Models;
 using Application.Services;
-using Persistence;
 using Persistence.Repositories;
 using API.Extensions;
 using API.Middlewares;
 using Application.Interfaces;
 using Core.Interfaces;
+using Persistence.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +39,8 @@ builder.Services.Configure<MinIoSettings>(builder.Configuration.GetSection("MinI
 builder.Services.AddDataBase(builder.Configuration);
 builder.Services.AddAuth(builder.Configuration);
 builder.Services.AddRedis(builder.Configuration);
+builder.Services.AddMongo(builder.Configuration);
+
 builder.Services.AddMdProcessor();
 builder.Services.AddFilters();
 

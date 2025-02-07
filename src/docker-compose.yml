@@ -10,6 +10,7 @@
       - db
       - minio
       - redis
+      - mongo
     environment:
       - ConnectionStrings__Postgres=Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
       - Minio__Endpoint=http://minio:9000
@@ -17,6 +18,8 @@
       - Minio__SecretKey=${MINIO_ROOT_PASSWORD}
       - Redis__Host=redis
       - Redis__Port=6379
+      - MongoDB__ConnectionString=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo:27017/${MONGO_DB_NAME}
+      - MongoDB__DatabaseName=${MONGO_DB_NAME}
 
   db:
     image: postgres:15
@@ -52,8 +55,21 @@
     volumes:
       - redis_data:/data
     command: ["redis-server", "--appendonly", "yes"]
+  
+  mongo:
+    image: mongo:6
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME}
+    volumes:
+      - mongo_data:/data/db
 
 volumes:
   db_data:
   minio_data:
   redis_data:
+  mongo_data:

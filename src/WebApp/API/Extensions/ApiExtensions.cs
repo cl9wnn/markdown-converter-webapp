@@ -11,6 +11,7 @@ using Markdown.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Driver;
 using Persistence;
 
 namespace API.Extensions;
@@ -47,22 +48,6 @@ public static class ApiExtensions
                     }
                 };
             });
-    }
-
-    public static void AddRedis(this IServiceCollection services, IConfiguration configuration)
-    {
-        var redisSettings = configuration.GetSection("RedisSettings").Get<RedisSettings>();
-
-        if (redisSettings == null || string.IsNullOrEmpty(redisSettings.Host))
-            throw new ArgumentException("Redis settings are missing or invalid.");
-
-        var redisConfiguration = $"{redisSettings.Host}:{redisSettings.Port}";
-
-        services.AddStackExchangeRedisCache(options =>
-        {
-            options.Configuration = redisConfiguration;
-            options.InstanceName = "MdProcessor_"; 
-        });
     }
     
     public static void AddFilters(this IServiceCollection services)
