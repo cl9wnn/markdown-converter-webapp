@@ -27,6 +27,9 @@ builder.Services.AddScoped<IDocumentsRepository, DocumentsRepository>();
 builder.Services.AddScoped<IDocumentAccessService, DocumentAccessService>();
 builder.Services.AddScoped<IDocumentAccessRepository, DocumentAccessRepository>();
 
+builder.Services.AddScoped<IChangeHistoryRepository, ChangeHistoryRepository>();
+builder.Services.AddScoped<IChangeHistoryService, ChangeHistoryService>();
+
 builder.Services.AddScoped<IMdService, MdService>();
 
 builder.Services.AddSingleton<JwtService>();

@@ -1,5 +1,6 @@
 using API.Attributes;
 using API.Contracts;
+using API.Extensions;
 using Application.Interfaces;
 using Core.Enums;
 using Core.Utils;
@@ -31,7 +32,9 @@ public class MarkdownController(IMdService mdService): ControllerBase
     [HttpPost("save/{documentId:guid}")]
     public async Task<IActionResult> SaveDocumentAsync(Guid documentId, [FromBody] string mdContent)
     {
-        var saveResult = await mdService.SaveMarkdownAsync(documentId, mdContent);
+        var accountId = HttpContext.GetAccountId();
+
+        var saveResult = await mdService.SaveMarkdownAsync(documentId, accountId, mdContent);
         
         return saveResult.IsSuccess
             ? Ok()

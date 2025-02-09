@@ -46,13 +46,22 @@ public class AccountService(IAccountRepository accountRepository, JwtService jwt
         return Result<string>.Failure("Invalid password!"!)!;
     }
 
-    public async Task<Result<Guid>> GetAccountIdByEmailAsync(string email)
+    public async Task<Result<Account>> GetAccountByEmailAsync(string email)
     {
         var accountResult = await accountRepository.GetByEmailAsync(email);
         
         return accountResult.IsSuccess
-            ? Result<Guid>.Success(accountResult.Data!.AccountId)
-            : Result<Guid>.Failure(accountResult.ErrorMessage!)!;
+            ? Result<Account>.Success(accountResult.Data!)
+            : Result<Account>.Failure(accountResult.ErrorMessage!)!;
+    }
+
+    public async Task<Result<Account>> GetAccountByIdAsync(Guid? accountId)
+    {
+        var accountResult = await accountRepository.GetByIdAsync(accountId);
+        
+        return accountResult.IsSuccess
+            ? Result<Account>.Success(accountResult.Data)
+            : Result<Account>.Failure(accountResult.ErrorMessage!)!;
     }
 
     public async Task<bool> IsExistsAsync(Guid accountId)

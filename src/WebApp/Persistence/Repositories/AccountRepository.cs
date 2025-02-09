@@ -43,7 +43,7 @@ public class AccountRepository(WebDbContext dbContext): IAccountRepository
         return Result<Account>.Success(account)!;
     }
 
-    public async Task<Result<Account>> GetByIdAsync(Guid accountId)
+    public async Task<Result<Account>> GetByIdAsync(Guid? accountId)
     {
         var accountEntity = await dbContext.Accounts
             .FirstOrDefaultAsync(a => a.AccountId == accountId);

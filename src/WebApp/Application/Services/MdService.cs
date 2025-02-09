@@ -1,9 +1,10 @@
 ﻿using Application.Interfaces;
+using Core.Interfaces;
 using Core.Utils;
 using Markdown.Interfaces;
 
 namespace Application.Services;
-public class MdService(IMarkdownProcessor markdownProcessor, MinioService minIoService): IMdService
+public class MdService(IMarkdownProcessor markdownProcessor, IChangeHistoryService historyService, MinioService minIoService): IMdService
 {
     public async Task<Result<string>> ConvertToHtmlAsync(string rawMarkdown)
     {
@@ -18,7 +19,7 @@ public class MdService(IMarkdownProcessor markdownProcessor, MinioService minIoS
         }
     }
     
-    public async Task<Result> SaveMarkdownAsync(Guid documentId, string content)
+    public async Task<Result> SaveMarkdownAsync(Guid documentId, Guid? accountId, string content)
     {
         var ctx = new CancellationTokenSource();
         var fileName = $"{documentId}.md"; 
@@ -26,6 +27,11 @@ public class MdService(IMarkdownProcessor markdownProcessor, MinioService minIoS
         try
         {
             await minIoService.UploadMarkdownTextAsync(content, fileName, ctx.Token);
+            
+            var logResult = await historyService.LogChangeAsync(documentId, accountId);
+            
+            if (!logResult.IsSuccess)
+                return Result.Failure(logResult.ErrorMessage!);
         }
         catch (Exception ex)
         {

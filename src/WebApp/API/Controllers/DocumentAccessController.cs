@@ -23,7 +23,7 @@ public class DocumentAccessController(IDocumentAccessService documentAccessServi
         if (!Enum.IsDefined(typeof(PermissionType), request.PermissionType) || request.Email == null)
             return BadRequest(new { Error = "Invalid permissionType or email" });
                 
-        var accountResult = await accountService.GetAccountIdByEmailAsync(request.Email!);
+        var accountResult = await accountService.GetAccountByEmailAsync(request.Email!);
 
         if (!accountResult.IsSuccess)
         {
@@ -31,7 +31,7 @@ public class DocumentAccessController(IDocumentAccessService documentAccessServi
         }
         
         var setPermissionResult = await documentAccessService
-            .SetUserPermissionAsync(request.PermissionType, documentId, accountResult.Data);
+            .SetUserPermissionAsync(request.PermissionType, documentId, accountResult.Data.AccountId);
         
         return setPermissionResult.IsSuccess
             ? Ok()

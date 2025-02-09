@@ -5,7 +5,8 @@ using Core.Models;
 using Core.Utils;
 namespace Application.Services;
 
-public class DocumentsService(IDocumentsRepository documentRepository, MinioService minIoService, RedisCacheService cacheService): IDocumentsService
+public class DocumentsService(IDocumentsRepository documentRepository, MinioService minIoService,
+    RedisCacheService cacheService, IChangeHistoryService historyService): IDocumentsService
 {
     public async Task<Result> CreateDocumentAsync(Guid? accountId, string name)
     {
@@ -92,6 +93,9 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
         
         var deleteResult = await documentRepository.DeleteAsync(documentId);
         
+        if (!deleteResult.IsSuccess)
+            return Result.Failure(deleteResult.ErrorMessage!); 
+        
         var fileName = $"{documentId}.md"; 
 
         try
@@ -106,6 +110,11 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
         if (!deleteResult.IsSuccess)
              Result.Failure(deleteResult.ErrorMessage!);
 
+        var historyDeleteResult = await historyService.ClearChangeHistoryAsync(documentId);
+        
+        if (!historyDeleteResult.IsSuccess)
+            return historyDeleteResult;
+        
         await cacheService.RemoveValueAsync($"user_docs_{accountId}");
 
         return Result.Success();
