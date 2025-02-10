@@ -25,7 +25,6 @@ public class ChangeHistoryService(IChangeHistoryRepository historyRepository, IA
             var accountResult = await accountService.GetAccountByIdAsync(change.AccountId);
             changeRecords.Add(new ChangeRecordDto
             {
-                DocumentId = change.DocumentId,
                 UserName = accountResult.IsSuccess ? accountResult.Data.FirstName : "Unknown",
                 Date = change.Date
             });

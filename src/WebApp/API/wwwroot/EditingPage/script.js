@@ -1,6 +1,7 @@
 import {tokenStorage, showForm, createLoginForm} from "../Authorization/script.js";
 import {createModal} from "../DocumentsPage/modal.js";
 import {createAccessSettingsModal} from "./accessSettingsModal.js";
+import {openHistoryModal} from "./historyModal.js";
 
 const sendBtn = document.getElementById("sendBtn");
 const copyBtn = document.getElementById("copyBtn");
@@ -11,6 +12,8 @@ const saveDocumentBtn = document.getElementById("saveDocumentBtn");
 const renameDocumentBtn = document.getElementById("renameDocumentBtn");
 const deleteDocumentBtn = document.getElementById("deleteDocumentBtn");
 const accessSettingsBtn = document.getElementById("accessSettingsBtn");
+
+const historyBtn = document.getElementById("historyBtn");
 
 
 export let documentId;
@@ -31,6 +34,10 @@ documentsBtn.addEventListener('click', () => {
     window.location.href = '/documents';
 });
 
+historyBtn.addEventListener("click",  async () => {
+    const historyArray = await getChangeHistory(documentId);
+    await openHistoryModal(historyArray, clearChangeHistory, documentId);
+});
 sendBtn.addEventListener("click",  async () => {
     await convertToHtml(documentId);
 });
@@ -386,6 +393,77 @@ async function getAccessList(documentId){
         alert(error);
     }
     return undefined;
+}
+
+async function getChangeHistory(documentId){
+    let token = tokenStorage.get();
+
+    try {
+        const response = await fetch(`/api/documents/${documentId}/history`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return data.changeHistory;
+        } else if (response.status === 401) {
+            const loginSuccessful = await showForm(createLoginForm, '/auth/signin', 'Sign In');
+
+            if (loginSuccessful) {
+                return await getChangeHistory(documentId);
+            }
+        }
+        else if (response.status === 403) {
+            customAlert('У вас недостаточно прав!');
+        }
+        else {
+            const data = await response.json();
+            alert(data.error);
+        }
+    } catch (error) {
+        alert(error);
+    }
+    return undefined;
+}
+
+async function clearChangeHistory(documentId) {
+    let token = tokenStorage.get();
+
+    try {
+        const response = await fetch(`/api/documents/${documentId}/history`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        });
+
+        if (response.ok) {
+            return true; 
+        }
+        else if (response.status === 401) {
+            const loginSuccessful = await showForm(createLoginForm, '/auth/signin', 'Sign In');
+
+            if (loginSuccessful) {
+                return await clearChangeHistory(documentId);
+            }
+        }
+        else if (response.status === 403) {
+            customAlert('У вас недостаточно прав!');
+        }
+        else {
+            const data = await response.json();
+            alert(data.error);
+        }
+    } catch (error) {
+        alert(error);
+    }
+
+    return false;
 }
 
 async function clearPermission(documentId, email) {

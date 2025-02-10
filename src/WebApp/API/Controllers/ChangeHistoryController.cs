@@ -26,7 +26,7 @@ public class ChangeHistoryController(IChangeHistoryService changeHistoryService)
             : BadRequest(new { Error = getResult.ErrorMessage });
     }
     
-    [ValidatePermission(RequiredAccessLevel.Editor)]
+    [ValidatePermission(RequiredAccessLevel.Author)]
     [HttpPost("{documentId:guid}/history")]
     public async Task<IActionResult> ClearChangeHistory(Guid documentId)
     {
