@@ -208,7 +208,7 @@ async function saveMarkdown(documentId) {
             if (loginSuccessful) {
             }
         } else if (response.status === 403) {
-            customAlert('У вас недостаточно прав!');
+            customAlert('You are denied access!');
         } else {
             const data = await response.json();
             alert(data.error);
@@ -274,7 +274,7 @@ async function deleteDocument(documentId) {
             }
         }
         else if (response.status === 403) {
-            customAlert('У вас недостаточно прав!');
+            customAlert('You are denied access!');
         }
         else {
             const data = await response.json();
@@ -313,7 +313,7 @@ async function renameProject(newName, documentId) {
             }
         }
         else if (response.status === 403) {
-            customAlert('У вас недостаточно прав!');
+            customAlert('You are denied access!');
         }
         else {
             const data = await response.json();
@@ -349,7 +349,7 @@ export async function giveAccess(inputData, documentId){
             }
         }
         else if (response.status === 403) {
-            customAlert('У вас недостаточно прав!');
+            customAlert('You are denied access!');
         }
         else {
             const data = await response.json();
@@ -383,7 +383,7 @@ async function getAccessList(documentId){
             }
         }
         else if (response.status === 403) {
-            customAlert('У вас недостаточно прав!');
+            customAlert('You are denied access!');
         }
         else {
             const data = await response.json();
@@ -418,7 +418,7 @@ async function getChangeHistory(documentId){
             }
         }
         else if (response.status === 403) {
-            customAlert('У вас недостаточно прав!');
+            customAlert('You are denied access!');
         }
         else {
             const data = await response.json();
@@ -453,7 +453,7 @@ async function clearChangeHistory(documentId) {
             }
         }
         else if (response.status === 403) {
-            customAlert('У вас недостаточно прав!');
+            customAlert('You are denied access!');
         }
         else {
             const data = await response.json();
@@ -489,7 +489,7 @@ async function clearPermission(documentId, email) {
             }
         }
         else if (response.status === 403) {
-            customAlert('У вас недостаточно прав!');
+            customAlert('You are denied access!');
         }
         else {
             const data = await response.json();

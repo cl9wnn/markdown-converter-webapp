@@ -13,6 +13,7 @@ public class ChangeRecordEntity
 
     [BsonRepresentation(BsonType.String)]
     public Guid? AccountId { get; set; }
-
     public DateTime ChangeDate { get; set; }
+    public string ContentHash { get; set; }
+
 }

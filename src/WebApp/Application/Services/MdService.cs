@@ -28,7 +28,7 @@ public class MdService(IMarkdownProcessor markdownProcessor, IChangeHistoryServi
         {
             await minIoService.UploadMarkdownTextAsync(content, fileName, ctx.Token);
             
-            var logResult = await historyService.LogChangeAsync(documentId, accountId);
+            var logResult = await historyService.LogChangeAsync(documentId, accountId, content);
             
             if (!logResult.IsSuccess)
                 return Result.Failure(logResult.ErrorMessage!);

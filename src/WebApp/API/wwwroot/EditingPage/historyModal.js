@@ -25,7 +25,7 @@
     modal.appendChild(clearHistoryButton);
 
     const title = document.createElement("h2");
-    title.textContent = "Журнал изменений";
+    title.textContent = "Change log";
     modal.appendChild(title);
 
     const table = document.createElement("table");
@@ -33,7 +33,7 @@
 
     const thead = document.createElement("thead");
     const headerRow = document.createElement("tr");
-    headerRow.innerHTML = `<th>Имя пользователя</th><th>Дата</th><th>Время</th>`;
+    headerRow.innerHTML = `<th>Username</th><th>Date</th><th>Time</th>`;
     thead.appendChild(headerRow);
     table.appendChild(thead);
 

@@ -9,13 +9,14 @@ namespace Persistence.Repositories;
 public class ChangeHistoryRepository(IMongoDatabase database) : IChangeHistoryRepository
 {
     private readonly IMongoCollection<ChangeRecordEntity> _historyCollection = database.GetCollection<ChangeRecordEntity>("ChangeHistory");
-    public async Task<Result> LogAsync(Guid documentId, Guid? accountId)
+    public async Task<Result> LogAsync(Guid documentId, Guid? accountId, string contentHash)
     {
         var changeRecord = new ChangeRecordEntity
         {
             DocumentId = documentId,
             AccountId = accountId,
             ChangeDate = DateTime.UtcNow,
+            ContentHash = contentHash
         };
 
         try
@@ -39,7 +40,7 @@ public class ChangeHistoryRepository(IMongoDatabase database) : IChangeHistoryRe
             return Result<List<ChangeRecord>>.Failure("No records found")!;
 
         var changeRecords = entities
-            .Select(e => ChangeRecord.Create(e.DocumentId, e.AccountId, e.ChangeDate))
+            .Select(e => ChangeRecord.Create(e.DocumentId, e.AccountId, e.ChangeDate, e.ContentHash))
             .ToList();
 
         return Result<List<ChangeRecord>>.Success(changeRecords);
@@ -61,5 +62,21 @@ public class ChangeHistoryRepository(IMongoDatabase database) : IChangeHistoryRe
         {
             return Result.Failure($"Failed to delete records: {ex.Message}");
         }
+    }
+
+    public async Task<Result<ChangeRecord>> GetLastChangeRecord(Guid documentId)
+    {
+        var lastLog = await _historyCollection
+            .Find(x => x.DocumentId == documentId)
+            .SortByDescending(x => x.ChangeDate)
+            .FirstOrDefaultAsync();
+        
+        if (lastLog == null)
+            return Result<ChangeRecord>.Failure("No records found")!;
+        
+        var lastChangeRecord = ChangeRecord.Create(lastLog.DocumentId, lastLog.AccountId,
+            lastLog.ChangeDate, lastLog.ContentHash);
+
+        return Result<ChangeRecord>.Success(lastChangeRecord);
     }
 }
