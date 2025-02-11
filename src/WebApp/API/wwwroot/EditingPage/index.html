@@ -11,6 +11,10 @@
 <body>
 <div class="main-container">
     <div class="description-container">
+        <div class="title-container">
+            <h1 id="projectName"></h1>
+            <p id="authorText"></p>
+        </div>
         <div class="redactor-buttons">
             <button class="icon-btn" id="historyBtn"></button>
             <button class="icon-btn" id="accessSettingsBtn"></button>
@@ -19,8 +23,6 @@
             <button class="icon-btn" id="deleteDocumentBtn"></button>
             <button class="icon-btn" id="documentsBtn"></button>
         </div>
-        <h1 id="projectName"></h1>
-        <p id="authorText"></p>
     </div>
 
     <div class="form-container">
@@ -32,8 +34,11 @@
             </form>
         </div>
         <div class="html-buttons">
-            <button  id="copyBtn" type="submit">copy</button>
-            <button  id="saveBtn" type="submit">download</button>
+            <button  id="uploadBtn" type="submit">upload md file</button>
+            <div class="copy-download-container">
+                <button  id="copyBtn" type="submit">copy</button>
+                <button  id="saveBtn" type="submit">download</button>
+            </div>
         </div>
         <button id="sendBtn" type="submit"> convert</button>
     </div>

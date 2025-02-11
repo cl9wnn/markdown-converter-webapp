@@ -6,8 +6,9 @@ import {openHistoryModal} from "./historyModal.js";
 const sendBtn = document.getElementById("sendBtn");
 const copyBtn = document.getElementById("copyBtn");
 const saveHtmlBtn = document.getElementById("saveBtn");
-const documentsBtn = document.getElementById("documentsBtn");
+const uploadMdFileBtn = document.getElementById("uploadBtn");
 
+const documentsBtn = document.getElementById("documentsBtn");
 const saveDocumentBtn = document.getElementById("saveDocumentBtn");
 const renameDocumentBtn = document.getElementById("renameDocumentBtn");
 const deleteDocumentBtn = document.getElementById("deleteDocumentBtn");
@@ -78,6 +79,26 @@ copyBtn.addEventListener("click", async () => {
     } else {
         console.error("Нет HTML-кода для копирования.");
     }
+});
+
+uploadMdFileBtn.addEventListener("click", () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".md";
+
+    input.onchange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('markdown-input').value = "";
+                document.getElementById('markdown-input').value = e.target.result; 
+            };
+            reader.readAsText(file);
+        }
+    };
+
+    input.click();
 });
 
 function generateFullHtml(content) {
