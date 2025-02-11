@@ -1,7 +1,7 @@
 ﻿using Core.Models;
 using Core.Utils;
 
-namespace Core.Interfaces;
+namespace Core.Interfaces.Repositories;
 
 public interface IDocumentsRepository
 {

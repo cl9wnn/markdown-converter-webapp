@@ -1,12 +1,14 @@
 using Application.Interfaces;
 using Core.Interfaces;
+using Core.Interfaces.Repositories;
+using Core.Interfaces.Services;
 using Core.Models;
 using Core.Utils;
 using Microsoft.AspNetCore.Identity;
 
 namespace Application.Services;
 
-public class AccountService(IAccountRepository accountRepository, JwtService jwtService): IAccountService
+public class AccountService(IAccountRepository accountRepository, IJwtService jwtService): IAccountService
 {
     public async Task<Result<string>> RegisterAsync(string email, string password, string firstName)
     {

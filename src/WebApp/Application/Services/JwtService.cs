@@ -2,21 +2,23 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Application.Models;
+using Core.Interfaces;
+using Core.Interfaces.Services;
 using Core.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Application.Services;
 
-public class JwtService(IOptions<AuthSettings> options)
+public class JwtService(IOptions<AuthSettings> options): IJwtService
 {
-    public string GenerateJwtToken(Account accountEntity)
+    public string GenerateJwtToken(Account account)
     {
         var claims = new List<Claim>
         {
-            new Claim("email", accountEntity.Email!),
-            new Claim("firstname", accountEntity.FirstName!),
-            new Claim("accountId", accountEntity.AccountId.ToString())
+            new Claim("email", account.Email!),
+            new Claim("firstname", account.FirstName!),
+            new Claim("accountId", account.AccountId.ToString())
         };
         
         var jwtToken = new JwtSecurityToken(

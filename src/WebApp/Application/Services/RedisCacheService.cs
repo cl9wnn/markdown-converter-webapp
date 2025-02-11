@@ -1,10 +1,12 @@
 ﻿using System.Text.Json;
+using Core.Interfaces;
+using Core.Interfaces.Services;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Services;
 
-public class RedisCacheService(IDistributedCache cache)
+public class RedisCacheService(IDistributedCache cache): ICacheService
 {
     public async Task SetValueAsync<T>(string key, T value, TimeSpan? expiry = null)
     {

@@ -5,6 +5,8 @@ using API.Extensions;
 using API.Middlewares;
 using Application.Interfaces;
 using Core.Interfaces;
+using Core.Interfaces.Repositories;
+using Core.Interfaces.Services;
 using Persistence.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,9 +34,9 @@ builder.Services.AddScoped<IChangeHistoryService, ChangeHistoryService>();
 
 builder.Services.AddScoped<IMdService, MdService>();
 
-builder.Services.AddSingleton<JwtService>();
-builder.Services.AddSingleton<MinioService>();
-builder.Services.AddSingleton<RedisCacheService>();
+builder.Services.AddSingleton<IJwtService, JwtService>();
+builder.Services.AddSingleton<IS3Service, MinioService>();
+builder.Services.AddSingleton<ICacheService, RedisCacheService>();
 
 builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection("AuthSettings"));
 builder.Services.Configure<MinIoSettings>(builder.Configuration.GetSection("MinIoSettings"));

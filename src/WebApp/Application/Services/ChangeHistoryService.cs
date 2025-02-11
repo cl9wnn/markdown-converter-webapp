@@ -3,13 +3,14 @@ using System.Text;
 using Application.Interfaces;
 using Application.Models;
 using Core.Interfaces;
+using Core.Interfaces.Repositories;
 using Core.Models;
 using Core.Utils;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Services;
 
-public class ChangeHistoryService(IChangeHistoryRepository historyRepository, IAccountService accountService, ILogger<ChangeHistoryService> logger): IChangeHistoryService
+public class ChangeHistoryService(IChangeHistoryRepository historyRepository, IAccountService accountService): IChangeHistoryService
 {
     
     public async Task<Result<List<ChangeRecordDto>>> GetChangeHistoryAsync(Guid documentId)
@@ -39,7 +40,6 @@ public class ChangeHistoryService(IChangeHistoryRepository historyRepository, IA
     public async Task<Result> LogChangeAsync(Guid documentId, Guid? accountId, string content)
     {
         var currentContentHash = ComputeHash(content);
-        logger.LogInformation("HASH _____ " + currentContentHash);
         
         var getResult = await historyRepository.GetLastChangeRecord(documentId);
         

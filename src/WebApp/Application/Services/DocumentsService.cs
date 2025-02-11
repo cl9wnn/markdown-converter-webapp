@@ -1,16 +1,18 @@
 ﻿using Application.Interfaces;
 using Application.Models;
 using Core.Interfaces;
+using Core.Interfaces.Repositories;
+using Core.Interfaces.Services;
 using Core.Models;
 using Core.Utils;
 namespace Application.Services;
 
-public class DocumentsService(IDocumentsRepository documentRepository, MinioService minIoService,
-    RedisCacheService cacheService, IChangeHistoryService historyService): IDocumentsService
+public class DocumentsService(IDocumentsRepository documentRepository, IS3Service minIoService,
+    ICacheService cacheService, IChangeHistoryService historyService): IDocumentsService
 {
     public async Task<Result> CreateDocumentAsync(Guid? accountId, string name)
     {
-        var ctx = new CancellationTokenSource();
+        using var ctx = new CancellationTokenSource();
 
         var createResult = await documentRepository.CreateAsync(accountId, name);
         
@@ -20,14 +22,12 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
         var fileName = $"{createResult.Data}.md";
         const string content = "_Write something in markdown..._";
         
-        try
-        {
-            await minIoService.UploadMarkdownTextAsync(content, fileName, ctx.Token);
-        }
-        catch (Exception ex)
+        var uploadResult = await minIoService.UploadMarkdownTextAsync(content, fileName, ctx.Token);
+        
+        if (!uploadResult.IsSuccess)
         {
             await documentRepository.DeleteAsync(createResult.Data);
-            return Result.Failure(ex.Message);
+            return Result.Failure(uploadResult.ErrorMessage!);
         }
         
         await cacheService.RemoveValueAsync($"user_docs_{accountId}");
@@ -98,17 +98,10 @@ public class DocumentsService(IDocumentsRepository documentRepository, MinioServ
         
         var fileName = $"{documentId}.md"; 
 
-        try
-        {
-            await minIoService.DeleteFileAsync(fileName, ctx.Token);
-        }
-        catch (Exception ex)
-        {
-            return Result.Failure(ex.Message)!;
-        }
+        var fileDeleted = await minIoService.DeleteFileAsync(fileName, ctx.Token);
         
-        if (!deleteResult.IsSuccess)
-             Result.Failure(deleteResult.ErrorMessage!);
+        if (!fileDeleted)
+            return Result.Failure($"Не удалось удалить файл {fileName} из MinIO.");
 
         var historyDeleteResult = await historyService.ClearChangeHistoryAsync(documentId);
         
